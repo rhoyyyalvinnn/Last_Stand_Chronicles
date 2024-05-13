@@ -1,6 +1,7 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,12 +12,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.MyGdxGame;
 
-public class Menu extends ScreenAdapter {
+public class Menu implements Screen {
     private Stage stage;
     private Skin skin;
     private SpriteBatch batch;
     private Texture background;
+    private final MyGdxGame context;
+
+    public Menu(final MyGdxGame context) {
+        this.context = context;
+    }
 
     @Override
     public void resize(int width, int height) {

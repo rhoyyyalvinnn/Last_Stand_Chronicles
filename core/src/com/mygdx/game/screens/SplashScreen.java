@@ -62,6 +62,9 @@ public class SplashScreen implements Screen {
         batch.begin();
         splash.draw(batch);
         batch.end();
+        if (tweenManager.getRunningTweensCount() == 0) {
+            splashAnimationFinished();
+        }
     }
 
     @Override

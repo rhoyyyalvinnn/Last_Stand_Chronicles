@@ -17,6 +17,7 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 
 	private SplashScreen splashScreen;
 	private EnumMap<ScreenType, Screen> screenCache;
+//	private Menu menuscreen;
 
 
 	
@@ -27,6 +28,7 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 		//menuscreen=new Menu();
 		setScreen(splashScreen);
 		splashScreen.setListener(new SplashScreen.SplashScreenListener() {
+
 	@Override
 	public void onSplashScreenFinished() {setScreen(ScreenType.MENU);
 		}

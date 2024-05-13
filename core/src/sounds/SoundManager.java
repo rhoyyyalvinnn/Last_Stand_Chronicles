@@ -11,7 +11,7 @@ public class SoundManager {
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("bgmusic/menubgmusic.mp3"));
         }
     }
-
+//
     public static void playBackgroundMusic() {
         if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
             backgroundMusic.play();

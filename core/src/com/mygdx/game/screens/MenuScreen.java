@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import sounds.SoundManager;
 
-public class Menu implements Screen {
+public class MenuScreen implements Screen {
     private Stage stage;
     private Skin skin;
     private SpriteBatch batch;
@@ -24,7 +24,7 @@ public class Menu implements Screen {
     private Music backgroundMusic;
     private final MyGdxGame context;
 
-    public Menu(final MyGdxGame context) {
+    public MenuScreen(final MyGdxGame context) {
         this.context = context;
     }
 

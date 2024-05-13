@@ -48,7 +48,7 @@ public class SettingScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Switch back to the menu screen
-                context.setScreen(new Menu(context));
+                context.setScreen(new MenuScreen(context));
             }
         });
         root.add(backButton).fillX().uniformX().padBottom(20).row();

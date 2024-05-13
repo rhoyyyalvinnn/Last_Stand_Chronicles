@@ -18,6 +18,7 @@ public class SplashScreen implements Screen {
     private final MyGdxGame context;
 
     public interface SplashScreenListener {
+
         void onSplashScreenFinished();
     }
     private SplashScreenListener listener;

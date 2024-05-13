@@ -2,23 +2,26 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.MyGdxGame;
+import sounds.SoundManager;
 
 public class Menu implements Screen {
     private Stage stage;
     private Skin skin;
     private SpriteBatch batch;
     private Texture background;
+    private Music backgroundMusic;
     private final MyGdxGame context;
 
     public Menu(final MyGdxGame context) {
@@ -31,31 +34,59 @@ public class Menu implements Screen {
     }
 
     @Override
-    public void show () {
+    public void show() {
         stage = new Stage(new ScreenViewport());
-        skin=new Skin(Gdx.files.internal("sample.json"));
+        skin = new Skin(Gdx.files.internal("sample.json"));
         batch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("background.png"));
+        SoundManager.create();
+        SoundManager.getBackgroundMusic().setLooping(true);
+        SoundManager.getBackgroundMusic().play();
+
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
 
         root.pad(20);
 
-        /*final Label enterUserLabel = new Label("Username:", skin);
-        final TextField usernameField = new TextField("", skin);
-        TextButton okButton = new TextButton("OK", skin);
+        // New Game Button
+        TextButton newGameButton = new TextButton("New Game", skin);
+        newGameButton.addListener(createButtonListener(newGameButton));
 
-        root.add(enterUserLabel).padBottom(20).colspan(2);
-        root.row();
-        root.add(usernameField).fillX().uniformX().padBottom(20).colspan(2);
-        root.row();
-        root.add(okButton).fillX().uniformX().colspan(2);*/
+        // Load Game Button
+        TextButton loadGameButton = new TextButton("Load Game", skin);
+        loadGameButton.addListener(createButtonListener(loadGameButton));
 
+        // Mute Button
+        TextButton settingsButton = new TextButton("Settings", skin);
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.setScreen(new SettingScreen(context)); // Switch to settings screen
+            }
+        });
 
+        // Exit Button
+        TextButton exitButton = new TextButton("Exit", skin);
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit(); // Exit the application
+            }
+        });
+
+        // Add buttons to the root table
+        root.add(newGameButton).fillX().uniformX().padBottom(20).row();
+        root.add(loadGameButton).fillX().uniformX().padBottom(20).row();
+        root.add(settingsButton).fillX().uniformX().padBottom(20).row();
+        root.add(exitButton).fillX().uniformX().padBottom(20).row();
+
+        Gdx.input.setInputProcessor(stage);
+        // Start playing background music
     }
+
     @Override
-    public void render (float delta) {
+    public void render(float delta) {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -63,27 +94,47 @@ public class Menu implements Screen {
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(delta);
         stage.draw();
     }
 
     @Override
-    public void hide () {
+    public void hide() {
     }
 
     @Override
-    public void pause () {
+    public void pause() {
     }
 
     @Override
-    public void resume () {
+    public void resume() {
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         stage.dispose();
         skin.dispose();
         batch.dispose();
         background.dispose();
+        backgroundMusic.dispose();
+    }
+
+    private ClickListener createButtonListener(TextButton button) {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Add your logic for handling button click
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
+                button.setColor(1f, 1f, 1f, 0.7f); // Set button color to semi-transparent white when hovered
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
+                button.setColor(1f, 1f, 1f, 1f); // Set button color back to normal when not hovered
+            }
+        };
     }
 }

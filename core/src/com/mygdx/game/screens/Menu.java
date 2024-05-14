@@ -38,7 +38,7 @@ public class Menu implements Screen {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("sample.json"));
         batch = new SpriteBatch();
-        background = new Texture(Gdx.files.internal("background.png"));
+        background = new Texture(Gdx.files.internal("menubg.png"));
         SoundManager.create();
         SoundManager.getBackgroundMusic().setLooping(true);
         SoundManager.getBackgroundMusic().play();
@@ -49,40 +49,48 @@ public class Menu implements Screen {
 
         root.pad(20);
 
-        // New Game Button
-        TextButton newGameButton = new TextButton("New Game", skin);
-        newGameButton.addListener(createButtonListener(newGameButton));
+        // Left side buttons
+        Table leftButtons = new Table();
+        leftButtons.add(createButton("New Game")).fillX().uniformX().padBottom(20).row();
+        leftButtons.add(createButton("Load Game")).fillX().uniformX().padBottom(20).row();
 
-        // Load Game Button
-        TextButton loadGameButton = new TextButton("Load Game", skin);
-        loadGameButton.addListener(createButtonListener(loadGameButton));
+        // Right side buttons
+        Table rightButtons = new Table();
+        rightButtons.add(createButton("Settings")).fillX().uniformX().padBottom(20).row();
+        rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(20).row();
 
-        // Mute Button
-        TextButton settingsButton = new TextButton("Settings", skin);
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                context.setScreen(new SettingScreen(context)); // Switch to settings screen
-            }
-        });
-
-        // Exit Button
-        TextButton exitButton = new TextButton("Exit", skin);
-        exitButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit(); // Exit the application
-            }
-        });
-
-        // Add buttons to the root table
-        root.add(newGameButton).fillX().uniformX().padBottom(20).row();
-        root.add(loadGameButton).fillX().uniformX().padBottom(20).row();
-        root.add(settingsButton).fillX().uniformX().padBottom(20).row();
-        root.add(exitButton).fillX().uniformX().padBottom(20).row();
+        // Aligning buttons horizontally in the center
+        root.add(leftButtons).expandX().left().uniform().padRight(20);
+        root.add().expandX();
+        root.add(rightButtons).expandX().right().uniform();
 
         Gdx.input.setInputProcessor(stage);
-        // Start playing background music
+    }
+
+    private TextButton createButton(String text) {
+        TextButton button = new TextButton(text, skin);
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (text.equals("Settings")) {
+                    context.setScreen(new SettingScreen(context)); // Switch to settings screen
+                } else if (text.equals("Exit")) {
+                    Gdx.app.exit(); // Exit the application
+                }
+                // Add logic for other buttons if needed
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
+                button.setColor(1f, 1f, 1f, 0.7f); // Set button color to semi-transparent white when hovered
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
+                button.setColor(1f, 1f, 1f, 1f); // Set button color back to normal when not hovered
+            }
+        });
+        return button;
     }
 
     @Override
@@ -117,24 +125,5 @@ public class Menu implements Screen {
         batch.dispose();
         background.dispose();
         backgroundMusic.dispose();
-    }
-
-    private ClickListener createButtonListener(TextButton button) {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // Add your logic for handling button click
-            }
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
-                button.setColor(1f, 1f, 1f, 0.7f); // Set button color to semi-transparent white when hovered
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
-                button.setColor(1f, 1f, 1f, 1f); // Set button color back to normal when not hovered
-            }
-        };
     }
 }

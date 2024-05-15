@@ -73,10 +73,15 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (text.equals("Settings")) {
-                    context.setScreen(new SettingScreen(context)); // Switch to settings screen
-                } else if (text.equals("Exit")) {
+                    context.setScreen(ScreenType.SETTING); // Switch to settings screen
+
+                }
+                if(text.equals("New Game")){
+                    context.setScreen(ScreenType.GAME);
+                }else if (text.equals("Exit")) {
                     Gdx.app.exit(); // Exit the application
                 }
+
                 // Add logic for other buttons if needed
             }
 

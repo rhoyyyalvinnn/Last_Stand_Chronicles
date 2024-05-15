@@ -25,7 +25,7 @@ public class SettingScreen implements Screen {
     public void show() {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("sample.json"));
-        backgroundTexture = new Texture(Gdx.files.internal("background.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("menubg.png"));
 
         Table root = new Table();
         root.setFillParent(true);

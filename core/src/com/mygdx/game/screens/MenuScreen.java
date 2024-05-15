@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
-import sounds.SoundManager;
+import com.mygdx.game.Managers.SoundManager;
 
 public class MenuScreen implements Screen {
     private Stage stage;
@@ -74,7 +74,6 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (text.equals("Settings")) {
                     context.setScreen(ScreenType.SETTING); // Switch to settings screen
-
                 }
                 if(text.equals("New Game")){
                     context.setScreen(ScreenType.GAME);

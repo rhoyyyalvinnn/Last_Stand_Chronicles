@@ -11,11 +11,7 @@ import com.mygdx.game.screens.MenuScreen;
 import com.mygdx.game.screens.ScreenType;
 import com.mygdx.game.screens.SplashScreen;
 import jdbc.MySQLConnection;
-import sounds.SoundManager;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.mygdx.game.Managers.SoundManager;
 import java.util.EnumMap;
 
 public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener{

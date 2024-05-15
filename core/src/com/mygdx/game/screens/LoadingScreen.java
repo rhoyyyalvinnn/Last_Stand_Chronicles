@@ -19,8 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
-import sounds.SoundManager;
-
+import com.mygdx.game.Managers.SoundManager;
 public class LoadingScreen extends ScreenAdapter implements InputProcessor{
 
     public Skin skin;

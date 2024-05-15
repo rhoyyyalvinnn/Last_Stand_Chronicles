@@ -1,5 +1,4 @@
-package sounds;
-
+package com.mygdx.game.Managers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 
@@ -9,14 +8,17 @@ public class SoundManager {
     public static void create() {
         if (backgroundMusic == null) {
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("bgmusic/menubgmusic.mp3"));
+            backgroundMusic.setVolume(0.3f);
         }
     }
-//
+    //
     public static void playBackgroundMusic() {
         if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
             backgroundMusic.play();
         }
     }
+
+
 
     public static void stopBackgroundMusic() {
         if (backgroundMusic != null && backgroundMusic.isPlaying()) {

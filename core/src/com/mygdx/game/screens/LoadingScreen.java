@@ -158,7 +158,7 @@ public class LoadingScreen extends ScreenAdapter implements InputProcessor{
 
     @Override
     public boolean keyDown(int keycode) {
-        context.setScreen(new MenuScreen(context));
+        context.setScreen(ScreenType.MENU);
         return true;
     }
 

@@ -52,6 +52,12 @@ public class MenuScreen implements Screen {
         // New Game Button
         TextButton newGameButton = new TextButton("New Game", skin);
         newGameButton.addListener(createButtonListener(newGameButton));
+        newGameButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.setScreen(new GameScreen(context)); // Switch to game screen
+            }
+        });
 
         // Load Game Button
         TextButton loadGameButton = new TextButton("Load Game", skin);

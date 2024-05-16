@@ -132,7 +132,7 @@ public class PlayerManager implements Runnable{
     public void inputUpdate(float delta) {
         int horizontalForce = 0;
         int verticalForce = 0;
-
+        int speed = 5;
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             horizontalForce -= 1;
         }
@@ -146,7 +146,7 @@ public class PlayerManager implements Runnable{
             verticalForce -= 1;
         }
 
-        player.setLinearVelocity(horizontalForce * 5, verticalForce * 5);
+        player.setLinearVelocity(horizontalForce * speed, verticalForce * speed);
     }
 
     public void setLastDirection(String direction) {

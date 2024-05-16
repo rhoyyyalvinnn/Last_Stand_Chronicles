@@ -4,6 +4,9 @@ import com.badlogic.gdx.audio.Music;
 
 public class SoundManager {
     private static Music backgroundMusic;
+    private static Music walkingEffect;
+
+
 
     public static void create() {
         if (backgroundMusic == null) {
@@ -17,8 +20,6 @@ public class SoundManager {
             backgroundMusic.play();
         }
     }
-
-
 
     public static void stopBackgroundMusic() {
         if (backgroundMusic != null && backgroundMusic.isPlaying()) {

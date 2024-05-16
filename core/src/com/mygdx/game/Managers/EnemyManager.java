@@ -2,7 +2,6 @@ package com.mygdx.game.Managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -17,44 +16,55 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mygdx.game.utils.Constants.PPM;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class PlayerManager implements Runnable{
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.mygdx.game.utils.Constants.PPM;
+public class EnemyManager implements Runnable{
     public enum State {STANDING, RUNNING};
 
     private String lastDirection;
     public State currentState;
     public State previousState;
 
-    //    private Animation<TextureRegion> animation_walking;
+    private Animation playerRun;
+    private boolean runningRight;
+    private float stateTimer;
+
+
     private Map<String, Animation<TextureRegion>> animations = new HashMap<>();
     private World world;
     public static Body player, real_player;
     private TextureAtlas textureAtlas;
     private SpriteBatch playerBatch;
-
     public static final int WORLD_WIDTH = 100;
     public static final int WORLD_HEIGHT = 100;
-    private float playerWidth;
-    private float playerHeight;
-
-    //bullet
+    float laserWidth,laserHeight,laserMovementSpeed;
 
 
     @Override
     public void run(){
         currentState = State.STANDING;
         previousState = State.STANDING;
-        //stateTimer = 0;
-       // runningRight = true;
+        stateTimer = 0;
+        runningRight = true;
         lastDirection = "down";
 
         textureAtlas = new TextureAtlas(Gdx.files.internal("Player.atlas"));
         player = createPlayer(WORLD_WIDTH / 2, WORLD_HEIGHT / 2,  32, 32, true);
-        playerWidth = 32;
-        playerHeight = 32;
         real_player = createPlayer(WORLD_WIDTH / 2, WORLD_HEIGHT / 2,  64, 64, false);
-        playerBatch = new SpriteBatch();
-
         animations = new HashMap<>();
 
         animations.put("running_down",new Animation<>(0.1f,textureAtlas.findRegions("walk_down")));
@@ -67,23 +77,14 @@ public class PlayerManager implements Runnable{
         animations.put("idle_right",new Animation<>(0.1f,textureAtlas.findRegions("idle_right")));
         animations.put("idle_down",new Animation<>(0.1f,textureAtlas.findRegions("idle_down")));
 
-
         initializeAnimations();
-//        animation_walking = new Animation<TextureRegion>(0.1f);
-//        Array<TextureAtlas.AtlasRegion> walkingFrame = textureAtlas.findRegions("walk_down");
+
     }
 
-    public PlayerManager(World world) {
+    public EnemyManager(World world) {
         this.world = world;
-
-//        currentState = State.STANDING;
-//        previousState = State.STANDING;
-//        stateTimer = 0;
-//        runningRight = true;
-
     }
     public Body createPlayer(int x, int y, int width, int height, boolean isStatic) {
-
         Body pBody;
         BodyDef def = new BodyDef();
 
@@ -94,7 +95,7 @@ public class PlayerManager implements Runnable{
             def.type = BodyDef.BodyType.StaticBody;
         }
 
-        // def.type = BodyDef.BodyType.DynamicBody;
+
         def.position.set(x / PPM, y / PPM);
         def.fixedRotation = true;
         pBody = world.createBody(def);
@@ -110,25 +111,21 @@ public class PlayerManager implements Runnable{
 
     public Animation<TextureRegion> determineCurrentAnimation(){
         String lastDir = getLastDirection();
-        // If movement keys are pressed, return the corresponding running animation
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             setLastDirection("up");
-
             return animations.get("running_up");
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             setLastDirection("left");
             return animations.get("running_left");
         } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             setLastDirection("down");
-
             return animations.get("running_down");
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){ // Gdx.input.isKeyPressed(Input.Keys.D)
-
             setLastDirection("right");
 
             return animations.get("running_right");
         }else {
-            // If no movement keys are pressed, return the corresponding idle animation
 
             return animations.get("idle_" + lastDir);
         }
@@ -174,5 +171,4 @@ public class PlayerManager implements Runnable{
     public SpriteBatch getBatch(){
         return playerBatch;
     }
-
 }

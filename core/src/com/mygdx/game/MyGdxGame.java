@@ -32,7 +32,7 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 		assetManager = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
-		screenCache = new EnumMap<ScreenType, Screen>(ScreenType.class);
+		screenCache = new EnumMap<>(ScreenType.class);
 		splashScreen = new SplashScreen(this);
 		setScreen(splashScreen);
 		splashScreen.setListener(this);
@@ -52,7 +52,6 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 	public void dispose() {
 		super.dispose();
 		splashScreen.dispose();
-		super.dispose();
 		SoundManager.dispose();
 	}
 

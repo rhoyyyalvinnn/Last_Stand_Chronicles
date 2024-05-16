@@ -3,7 +3,7 @@ package sounds;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 
-public class SoundManager {
+public class    SoundManager {
     private static Music backgroundMusic;
 
     public static void create() {

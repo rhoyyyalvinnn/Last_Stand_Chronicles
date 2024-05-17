@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.Bullet;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
@@ -46,6 +47,8 @@ public class GameScreen extends ScreenAdapter {
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
 
+    private HUD hud;
+
     public GameScreen(MyGdxGame context) {
         this.context = context;
     }
@@ -69,6 +72,9 @@ public class GameScreen extends ScreenAdapter {
         rayHandler = new RayHandler(world);
         suga = new PointLight(rayHandler, 50, Color.GRAY, 4, 0, 0);
         suga.attachToBody(PlayerManager.player, .2f, 0.3f);
+
+        // Initialize HUD
+        hud = new HUD(100); // Max health is 100
     }
 
     @Override
@@ -88,6 +94,10 @@ public class GameScreen extends ScreenAdapter {
         batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
         batch.end();
 
+        // Render health bar
+//        hud.update(delta, player.getHealth()); // Update health based on player's current health
+        hud.draw();
+
         // Bullet render
         rayHandler.render();
         batch.begin();
@@ -103,6 +113,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width / SCALE, height / SCALE);
+        hud.resize(width, height); // Update HUD viewport
     }
 
     @Override
@@ -124,6 +135,7 @@ public class GameScreen extends ScreenAdapter {
         b2dr.dispose();
         map.dispose();
         bulletTexture.dispose();
+        hud.dispose(); // Dispose HUD resources
     }
 
     private void cameraUpdate(float delta) {
@@ -146,30 +158,31 @@ public class GameScreen extends ScreenAdapter {
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
+//
+//        // Handle health logic (e.g., decrease health when hit)
+//        // For demonstration purposes, reducing health on key press
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+//            player.decreaseHealth(10); // Decrease player health by 10
+//        }
 
         Vector2 bulletStartPosition = player.getPosition().cpy();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-//            Gdx.app.log("Bullet", "Creating bullet UP");
             Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(0, bulletSpeed));
             bulletManager.add(myBullet);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-//            Gdx.app.log("Bullet", "Creating bullet DOWN");
             Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(0, -bulletSpeed));
             bulletManager.add(myBullet);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-//            Gdx.app.log("Bullet", "Creating bullet LEFT");
             Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(-bulletSpeed, 0));
             bulletManager.add(myBullet);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-//            Gdx.app.log("Bullet", "Creating bullet RIGHT");
             Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(bulletSpeed, 0));
             bulletManager.add(myBullet);
         }
-
 
         bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
     }

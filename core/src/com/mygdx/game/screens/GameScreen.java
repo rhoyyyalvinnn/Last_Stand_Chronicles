@@ -11,14 +11,19 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Managers.Bullet;
+import com.mygdx.game.Managers.BulletContactListener;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.mygdx.game.utils.TiledObjectUtil;
 
 import java.util.ArrayList;
 
@@ -45,6 +50,7 @@ public class GameScreen extends ScreenAdapter {
     private Texture bulletTexture;
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
+  //  private BulletContactListener bulletContactListener;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -69,6 +75,17 @@ public class GameScreen extends ScreenAdapter {
         rayHandler = new RayHandler(world);
         suga = new PointLight(rayHandler, 50, Color.GRAY, 4, 0, 0);
         suga.attachToBody(PlayerManager.player, .2f, 0.3f);
+
+     //   bulletContactListener = new BulletContactListener();
+    //    world.setContactListener(bulletContactListener);
+
+   /*     BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        Body collisionLayerBody = world.createBody(bodyDef);
+        collisionLayerBody.setUserData("CollisionLayer");*/
+       // TiledObjectUtil.parseTiledObjectLayer(world, map.getMap().getLayers().get("collision_layer").getObjects());
+
+
     }
 
     @Override
@@ -98,6 +115,11 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         batch.end();
+       /* for (Body body : bulletContactListener.getBodiesToRemove()) {
+            world.destroyBody(body);
+            bulletManager.removeIf(bullet -> bullet.getBody() == body);
+        }*/
+        //bulletContactListener.clear();
     }
 
     @Override
@@ -146,31 +168,30 @@ public class GameScreen extends ScreenAdapter {
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
-
-        Vector2 bulletStartPosition = player.getPosition().cpy();
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-//            Gdx.app.log("Bullet", "Creating bullet UP");
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(0, bulletSpeed));
-            bulletManager.add(myBullet);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-//            Gdx.app.log("Bullet", "Creating bullet DOWN");
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(0, -bulletSpeed));
-            bulletManager.add(myBullet);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-//            Gdx.app.log("Bullet", "Creating bullet LEFT");
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(-bulletSpeed, 0));
-            bulletManager.add(myBullet);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-//            Gdx.app.log("Bullet", "Creating bullet RIGHT");
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(bulletSpeed, 0));
-            bulletManager.add(myBullet);
-        }
-
-
+        handleBulletInput();
         bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
+    }
+    private void handleBulletInput() {
+        if (Gdx.input.justTouched()) {
+            Vector2 bulletStartPosition = player.getPosition().cpy();
+
+            // Get the mouse screen position
+            Vector3 mouseScreenPosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            // Convert the screen position to world coordinates
+            Vector3 mouseWorldPosition3 = camera.unproject(mouseScreenPosition);
+            Vector2 mouseWorldPosition = new Vector2(mouseWorldPosition3.x / PPM, mouseWorldPosition3.y / PPM);
+
+            // Calculate direction
+            Vector2 direction = mouseWorldPosition.cpy().sub(bulletStartPosition).nor();
+
+            // Calculate bullet velocity
+            Vector2 bulletVelocity = direction.scl(bulletSpeed);
+
+            // Create and add the bullet
+            Bullet myBullet = new Bullet(world,bulletStartPosition, mouseWorldPosition, bulletVelocity);
+         //   myBullet.getBody().setUserData(myBullet);
+            bulletManager.add(myBullet);
+
+        }
     }
 }

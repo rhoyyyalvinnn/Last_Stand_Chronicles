@@ -62,7 +62,6 @@ public class PlayerManager implements Runnable{
         animations.put("idle_right",new Animation<>(0.1f,textureAtlas.findRegions("idle_right")));
         animations.put("idle_down",new Animation<>(0.1f,textureAtlas.findRegions("idle_down")));
 
-        initializeAnimations();
 //        animation_walking = new Animation<TextureRegion>(0.1f);
 //        Array<TextureAtlas.AtlasRegion> walkingFrame = textureAtlas.findRegions("walk_down");
     }
@@ -161,9 +160,7 @@ public class PlayerManager implements Runnable{
         return player.getPosition();
     }
 
-    private void initializeAnimations(){
 
-    }
 
     public SpriteBatch getBatch(){
         return playerBatch;

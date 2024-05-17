@@ -50,4 +50,5 @@ public class BulletContactListener implements ContactListener {
        return "CollisionLayer".equals(fixtureA.getBody().getUserData()) ||
                "CollisionLayer".equals(fixtureB.getBody().getUserData());
     }
+    //pa kuha na pero di ma remove
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.MyGdxGame;
 
 public class LevelManager {
+    //kani sad dapat once clicked ang level kay kani ang mo handle
     private final MyGdxGame context;
     Texture[] test_map_textures;
     private String level;

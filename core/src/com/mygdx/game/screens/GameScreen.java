@@ -191,7 +191,7 @@ public class GameScreen extends ScreenAdapter {
             Bullet myBullet = new Bullet(world,bulletStartPosition, mouseWorldPosition, bulletVelocity);
          //   myBullet.getBody().setUserData(myBullet);
             bulletManager.add(myBullet);
-
+//lisod ang pagwala sa bullet
         }
     }
 }

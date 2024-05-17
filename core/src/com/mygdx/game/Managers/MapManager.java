@@ -39,7 +39,7 @@ public class MapManager {
         };
 
 
-
+//makulng na ang bala sa map pero di pa mawala
        rayHandler=new RayHandler(world);
        rayHandler.setAmbientLight(.2f);
     }

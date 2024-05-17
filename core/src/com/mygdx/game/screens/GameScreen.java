@@ -12,18 +12,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Managers.Bullet;
-import com.mygdx.game.Managers.BulletContactListener;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
-import com.mygdx.game.utils.TiledObjectUtil;
 
 import java.util.ArrayList;
 
@@ -50,7 +46,6 @@ public class GameScreen extends ScreenAdapter {
     private Texture bulletTexture;
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
-  //  private BulletContactListener bulletContactListener;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -75,17 +70,6 @@ public class GameScreen extends ScreenAdapter {
         rayHandler = new RayHandler(world);
         suga = new PointLight(rayHandler, 50, Color.GRAY, 4, 0, 0);
         suga.attachToBody(PlayerManager.player, .2f, 0.3f);
-
-     //   bulletContactListener = new BulletContactListener();
-    //    world.setContactListener(bulletContactListener);
-
-   /*     BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        Body collisionLayerBody = world.createBody(bodyDef);
-        collisionLayerBody.setUserData("CollisionLayer");*/
-       // TiledObjectUtil.parseTiledObjectLayer(world, map.getMap().getLayers().get("collision_layer").getObjects());
-
-
     }
 
     @Override
@@ -115,11 +99,6 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         batch.end();
-       /* for (Body body : bulletContactListener.getBodiesToRemove()) {
-            world.destroyBody(body);
-            bulletManager.removeIf(bullet -> bullet.getBody() == body);
-        }*/
-        //bulletContactListener.clear();
     }
 
     @Override
@@ -188,10 +167,9 @@ public class GameScreen extends ScreenAdapter {
             Vector2 bulletVelocity = direction.scl(bulletSpeed);
 
             // Create and add the bullet
-            Bullet myBullet = new Bullet(world,bulletStartPosition, mouseWorldPosition, bulletVelocity);
-         //   myBullet.getBody().setUserData(myBullet);
+            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity);
             bulletManager.add(myBullet);
-//lisod ang pagwala sa bullet
+
         }
     }
 }

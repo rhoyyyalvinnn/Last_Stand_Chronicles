@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.HUD;
@@ -46,7 +47,6 @@ public class GameScreen extends ScreenAdapter {
     private Texture bulletTexture;
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
-
     private HUD hud;
 
     public GameScreen(MyGdxGame context) {
@@ -113,7 +113,6 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width / SCALE, height / SCALE);
-        hud.resize(width, height); // Update HUD viewport
     }
 
     @Override
@@ -135,7 +134,6 @@ public class GameScreen extends ScreenAdapter {
         b2dr.dispose();
         map.dispose();
         bulletTexture.dispose();
-        hud.dispose(); // Dispose HUD resources
     }
 
     private void cameraUpdate(float delta) {
@@ -158,32 +156,29 @@ public class GameScreen extends ScreenAdapter {
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
-//
-//        // Handle health logic (e.g., decrease health when hit)
-//        // For demonstration purposes, reducing health on key press
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-//            player.decreaseHealth(10); // Decrease player health by 10
-//        }
-
-        Vector2 bulletStartPosition = player.getPosition().cpy();
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(0, bulletSpeed));
-            bulletManager.add(myBullet);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(0, -bulletSpeed));
-            bulletManager.add(myBullet);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(-bulletSpeed, 0));
-            bulletManager.add(myBullet);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            Bullet myBullet = new Bullet(bulletStartPosition, new Vector2(bulletSpeed, 0));
-            bulletManager.add(myBullet);
-        }
-
+        handleBulletInput();
         bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
+    }
+    private void handleBulletInput() {
+        if (Gdx.input.justTouched()) {
+            Vector2 bulletStartPosition = player.getPosition().cpy();
+
+            // Get the mouse screen position
+            Vector3 mouseScreenPosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            // Convert the screen position to world coordinates
+            Vector3 mouseWorldPosition3 = camera.unproject(mouseScreenPosition);
+            Vector2 mouseWorldPosition = new Vector2(mouseWorldPosition3.x / PPM, mouseWorldPosition3.y / PPM);
+
+            // Calculate direction
+            Vector2 direction = mouseWorldPosition.cpy().sub(bulletStartPosition).nor();
+
+            // Calculate bullet velocity
+            Vector2 bulletVelocity = direction.scl(bulletSpeed);
+
+            // Create and add the bullet
+            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity);
+            bulletManager.add(myBullet);
+
+        }
     }
 }

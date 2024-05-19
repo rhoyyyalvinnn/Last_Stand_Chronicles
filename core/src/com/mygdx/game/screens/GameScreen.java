@@ -14,11 +14,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.Bullet;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
+import com.mygdx.game.Button2;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
@@ -49,6 +52,14 @@ public class GameScreen extends ScreenAdapter {
     private final float bulletSpeed = 500;
     private HUD hud;
 
+    private boolean isPaused = false;
+
+    private boolean escapePressed = false;
+    private Skin skin;
+    private Stage stage;
+    private Button2 resumeButton;
+    private Button2 exitButton;
+
     public GameScreen(MyGdxGame context) {
         this.context = context;
     }
@@ -75,39 +86,62 @@ public class GameScreen extends ScreenAdapter {
 
         // Initialize HUD
         hud = new HUD(100); // Max health is 100
+
+        // Initialize pause screen
+        skin = new Skin(Gdx.files.internal("sample.json"));
+        stage = new Stage();
+        resumeButton = new Button2("Resume", 100, 100, skin);
+        exitButton = new Button2("Exit", 200, 100, skin);
+        stage.addActor(resumeButton.getButton2());
+        stage.addActor(exitButton.getButton2());
     }
 
     @Override
     public void render(float delta) {
-        update(delta);
-        Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        elapsedTime += delta;
-
-        Animation<TextureRegion> currentAnimation = player.determineCurrentAnimation();
-        TextureRegion currentFrame = currentAnimation.getKeyFrame(elapsedTime, true);
-
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        map.drawLayerTextures(batch, currentFrame);
-        batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
-        batch.end();
-
-        // Render health bar
-//        hud.update(delta, player.getHealth()); // Update health based on player's current health
-        hud.draw();
-
-        // Bullet render
-        rayHandler.render();
-        batch.begin();
-        for (Bullet bullet : bulletManager) {
-            bullet.Update(delta);
-            if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
-                batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
-            }
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escapePressed) {
+            isPaused = !isPaused;
+            escapePressed = true;
+        } else if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            escapePressed = false;
         }
-        batch.end();
+
+        if (isPaused) {
+            Gdx.gl.glClearColor(1, 1, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            stage.act(delta);
+            stage.draw();
+        } else {
+            update(delta);
+            Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            elapsedTime += delta;
+
+            Animation<TextureRegion> currentAnimation = player.determineCurrentAnimation();
+            TextureRegion currentFrame = currentAnimation.getKeyFrame(elapsedTime, true);
+
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            map.drawLayerTextures(batch, currentFrame);
+            batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
+            batch.end();
+
+            // Render health bar
+//            hud.update(delta, player.getHealth()); // Update health based on player's current health
+            hud.draw();
+
+            // Bullet render
+            rayHandler.render();
+            batch.begin();
+            for (Bullet bullet : bulletManager) {
+                bullet.Update(delta);
+                if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
+                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
+                }
+            }
+            batch.end();
+        }
     }
 
     @Override
@@ -134,6 +168,8 @@ public class GameScreen extends ScreenAdapter {
         b2dr.dispose();
         map.dispose();
         bulletTexture.dispose();
+        skin.dispose();
+        stage.dispose();
     }
 
     private void cameraUpdate(float delta) {
@@ -159,6 +195,7 @@ public class GameScreen extends ScreenAdapter {
         handleBulletInput();
         bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
     }
+
     private void handleBulletInput() {
         if (Gdx.input.justTouched()) {
             Vector2 bulletStartPosition = player.getPosition().cpy();

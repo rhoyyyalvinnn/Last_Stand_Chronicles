@@ -20,9 +20,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
-import com.mygdx.game.MyGdxGame;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static com.mygdx.game.utils.Constants.PPM;
+import static java.awt.image.ImageObserver.HEIGHT;
+import static java.awt.image.ImageObserver.WIDTH;
 
 public class GameScreen extends ScreenAdapter {
     private final MyGdxGame context;
@@ -44,6 +49,9 @@ public class GameScreen extends ScreenAdapter {
     private MapManager map;
     private RayHandler rayHandler;
     private PointLight suga;
+
+    // Asher Pax
+
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -142,5 +150,9 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
 
+    }
+
+    public World getWorld(){
+        return world;
     }
 }

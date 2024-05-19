@@ -105,18 +105,18 @@ public class PlayerManager implements Runnable{
     public Animation<TextureRegion> determineCurrentAnimation(){
             String lastDir = getLastDirection();
             // If movement keys are pressed, return the corresponding running animation
-            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
                 setLastDirection("up");
 
                 return animations.get("running_up");
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 setLastDirection("left");
                 return animations.get("running_left");
-            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 setLastDirection("down");
 
                 return animations.get("running_down");
-            } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){ // Gdx.input.isKeyPressed(Input.Keys.D)
+            } else if(Gdx.input.isKeyPressed(Input.Keys.D)){ // Gdx.input.isKeyPressed(Input.Keys.D)
 
                 setLastDirection("right");
 
@@ -133,16 +133,16 @@ public class PlayerManager implements Runnable{
         int horizontalForce = 0;
         int verticalForce = 0;
         int speed = 5;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             horizontalForce -= 1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             horizontalForce += 1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             verticalForce += 1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             verticalForce -= 1;
         }
 

@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.Bullet;
+import com.mygdx.game.Managers.Monster;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
@@ -67,8 +68,14 @@ public class GameScreen extends ScreenAdapter {
     private Button2 exitButton;
     private Label paused;
 
+    // asher pax
+    private Monster monster;
+
     public GameScreen(MyGdxGame context) {
+
         this.context = context;
+        // asher pax
+//        monster = new Monster(this, map, world, player.getPosition().x, player.getPosition().y);
     }
 
     @Override
@@ -84,6 +91,9 @@ public class GameScreen extends ScreenAdapter {
         player = new PlayerManager(world);
         player.run();
         batch = player.getBatch();
+
+        // asher pax monster initialization
+        monster = new Monster(this, map, world, player.getPosition().x, player.getPosition().y);
 
         map = new MapManager(world);
 
@@ -193,6 +203,7 @@ public class GameScreen extends ScreenAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             map.drawLayerTextures(batch, currentFrame);
+            monster.draw(batch);
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
             batch.end();
 
@@ -257,6 +268,8 @@ public class GameScreen extends ScreenAdapter {
         rayHandler.setAmbientLight(.2f);
 
         player.inputUpdate(delta);
+        // asher pax
+        monster.update(delta);
         cameraUpdate(delta);
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);
@@ -286,5 +299,9 @@ public class GameScreen extends ScreenAdapter {
             bulletManager.add(myBullet);
 
         }
+    }
+
+    public World getWorld() {
+        return world;
     }
 }

@@ -65,7 +65,7 @@ public class GameScreen extends ScreenAdapter {
     private Stage stage;
     private Button2 resumeButton;
     private Button2 exitButton;
-    private Label pauseText;
+    private Label paused;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -95,42 +95,45 @@ public class GameScreen extends ScreenAdapter {
         // Initialize HUD
         hud = new HUD(100); // Max health is 100
 
+
+
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
 
-        root.pad(20);
+        paused = new Label("Game is paused", skin);
+        root.pad(200);
         Table leftButtons = new Table();
         leftButtons.add(createButton("Resume")).fillX().uniformX().padBottom(50).row();
         Table rightButtons = new Table();
         rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(50).row();
 
-        root.add(leftButtons).expandX().left().uniform().padRight(20);
-        root.add().expandX();
+        root.add(leftButtons).expandX().left().uniform().padRight(10);
+        root.add(paused).expandX().left().uniform().padTop(-150);
         root.add(rightButtons).expand().right().uniform();
 
         Gdx.input.setInputProcessor(stage);
 
 
-
-//        // Initialize pause screen
-//        skin = new Skin(Gdx.files.internal("sample.json"));
-//        stage = new Stage();
+//        // for Pausing
+//        Table root = new Table();
+//        root.setFillParent(true);
+//        stage.addActor(root);
 //
-//        resumeButton = new Button2("Resume", 250, 250, skin);
-//        exitButton = new Button2("Exit", 350, 250, skin);
-//        pauseText = new Label("Game is paused!", skin);
-//        pauseText.setPosition(238, 300);
-//        stage.addActor(pauseText);
-//        stage.addActor(resumeButton.getButton2());
-//        stage.addActor(exitButton.getButton2());
+//        paused = new Label("Game is paused", skin);
+//        root.pad(500);
+//        Table leftButtons = new Table();
+//        leftButtons.add(createButton("Resume")).fillX().uniformX().padBottom(50).row();
+//        Table rightButtons = new Table();
+//        rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(50).row();
 //
-//        resumeButton.getButton2().addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                isPaused = false;
-//            }
-//        });
+//
+//        root.add(paused).expandX().left().uniform();
+//        root.add(leftButtons).expandX().left().uniform().padRight(20);
+//        root.add().expandX();
+//        root.add(rightButtons).expand().right().uniform();
+//
+//        Gdx.input.setInputProcessor(stage);
     }
 
 

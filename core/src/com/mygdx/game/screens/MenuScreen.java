@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -23,6 +24,7 @@ public class MenuScreen implements Screen {
     private Texture background;
     private Music backgroundMusic;
     private final MyGdxGame context;
+
 
     public MenuScreen(final MyGdxGame context) {
         this.context = context;
@@ -49,6 +51,7 @@ public class MenuScreen implements Screen {
 
         root.pad(20);
 
+
         // Left side buttons
         Table leftButtons = new Table();
         leftButtons.add(createButton("New Game")).fillX().uniformX().padBottom(20).row();
@@ -60,6 +63,7 @@ public class MenuScreen implements Screen {
         rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(20).row();
 
         // Aligning buttons horizontally in the center
+
         root.add(leftButtons).expandX().left().uniform().padRight(20);
         root.add().expandX();
         root.add(rightButtons).expandX().right().uniform();

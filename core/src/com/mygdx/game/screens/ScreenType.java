@@ -6,7 +6,8 @@ public enum ScreenType {
     GAME(GameScreen.class),
     LOADING(LoadingScreen.class),
     SETTING(SettingScreen.class),
-    MENU(MenuScreen.class);
+    MENU(MenuScreen.class),
+    SPLASH2(SplashTWO.class);
 
     private final Class <? extends Screen> screenClass;
     ScreenType(final Class<? extends Screen> screenClass) {

@@ -47,8 +47,8 @@ public class SplashScreen implements Screen {
         splash.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 
         Tween.set(splash, SpriteAccessor.ALPHA).target(0).start(tweenManager);
-        Tween.to(splash, SpriteAccessor.ALPHA, 2).target(1).start(tweenManager);
-        Tween.to(splash,SpriteAccessor.ALPHA,2).target(0).delay(2).start(tweenManager);
+        Tween.to(splash, SpriteAccessor.ALPHA, 3).target(1).start(tweenManager);
+        Tween.to(splash,SpriteAccessor.ALPHA,3).target(0).delay(2).start(tweenManager);
 
 
     }

@@ -42,7 +42,7 @@ public class SplashScreen implements Screen {
         tweenManager = new TweenManager();
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
 
-        Texture splashtexture = new Texture("splash.png");
+        Texture splashtexture = new Texture("splash1.png");
         splash = new Sprite(splashtexture);
         splash.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 

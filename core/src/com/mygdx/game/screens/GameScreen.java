@@ -14,10 +14,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.Bullet;
 import com.mygdx.game.MyGdxGame;
@@ -70,7 +74,8 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         bulletTexture = new Texture("tile000.png");
-
+        stage = new Stage(new ScreenViewport()); //initialize stage
+        skin = new Skin(Gdx.files.internal("sample.json")); //initialize skin
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE, Gdx.graphics.getHeight() / SCALE);
 
@@ -90,19 +95,72 @@ public class GameScreen extends ScreenAdapter {
         // Initialize HUD
         hud = new HUD(100); // Max health is 100
 
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
 
-        // Initialize pause screen
-        skin = new Skin(Gdx.files.internal("sample.json"));
-        stage = new Stage();
+        root.pad(20);
+        Table leftButtons = new Table();
+        leftButtons.add(createButton("Resume")).fillX().uniformX().padBottom(50).row();
+        Table rightButtons = new Table();
+        rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(50).row();
 
-        resumeButton = new Button2("Resume", 250, 250, skin);
-        exitButton = new Button2("Exit", 350, 250, skin);
-        pauseText = new Label("Game is paused!", skin);
-        pauseText.setPosition(238, 300);
-        stage.addActor(pauseText);
-        stage.addActor(resumeButton.getButton2());
-        stage.addActor(exitButton.getButton2());
+        root.add(leftButtons).expandX().left().uniform().padRight(20);
+        root.add().expandX();
+        root.add(rightButtons).expand().right().uniform();
+
+        Gdx.input.setInputProcessor(stage);
+
+
+
+//        // Initialize pause screen
+//        skin = new Skin(Gdx.files.internal("sample.json"));
+//        stage = new Stage();
+//
+//        resumeButton = new Button2("Resume", 250, 250, skin);
+//        exitButton = new Button2("Exit", 350, 250, skin);
+//        pauseText = new Label("Game is paused!", skin);
+//        pauseText.setPosition(238, 300);
+//        stage.addActor(pauseText);
+//        stage.addActor(resumeButton.getButton2());
+//        stage.addActor(exitButton.getButton2());
+//
+//        resumeButton.getButton2().addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                isPaused = false;
+//            }
+//        });
     }
+
+
+    private TextButton createButton(String text) {
+        TextButton button = new TextButton(text, skin);
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (text.equals("Resume")) {
+                    isPaused = false;
+                } else if (text.equals("Exit")) {
+                    Gdx.app.exit(); // Exit the application
+                }
+
+                // Add logic for other buttons if needed
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
+                button.setColor(1f, 1f, 1f, 0.7f); // Set button color to semi-transparent white when hovered
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
+                button.setColor(1f, 1f, 1f, 1f); // Set button color back to normal when not hovered
+            }
+        });
+        return button;
+    }
+
 
     @Override
     public void render(float delta) {

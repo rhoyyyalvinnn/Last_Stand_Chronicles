@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.SoundManager;
+import com.badlogic.gdx.graphics.g2d.Animation;
 
 public class MenuScreen implements Screen {
     private Stage stage;
@@ -23,9 +25,11 @@ public class MenuScreen implements Screen {
     private Texture background;
     private Music backgroundMusic;
     private final MyGdxGame context;
+    protected Animation<TextureRegion> animation;
 
     public MenuScreen(final MyGdxGame context) {
         this.context = context;
+
     }
 
     @Override
@@ -38,7 +42,7 @@ public class MenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("sample.json"));
         batch = new SpriteBatch();
-        background = new Texture(Gdx.files.internal("menubg.png"));
+        background = new Texture(Gdx.files.internal("loading/nindot.png"));
         SoundManager.create();
         SoundManager.getBackgroundMusic().setLooping(true);
         SoundManager.getBackgroundMusic().play();

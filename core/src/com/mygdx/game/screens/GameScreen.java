@@ -136,6 +136,7 @@ public class GameScreen extends ScreenAdapter {
             batch.begin();
             for (Bullet bullet : bulletManager) {
                 bullet.Update(delta);
+                TextureRegion bulletFrame = bullet.getCurrentFrame();
                 if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
                     batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
                 }

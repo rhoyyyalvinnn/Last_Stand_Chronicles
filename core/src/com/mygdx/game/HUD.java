@@ -27,7 +27,7 @@ public class HUD {
         healthBar = new ProgressBar(0, maxHealth, 1, false, progressBarStyle);
         healthBar.setValue(maxHealth);
         healthBar.setWidth(200);
-        healthBar.setHeight(20);
+        healthBar.setHeight(40);
         healthBar.setPosition(20, Gdx.graphics.getHeight() - 40);
 
 

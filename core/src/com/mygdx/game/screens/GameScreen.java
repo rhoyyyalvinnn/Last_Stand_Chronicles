@@ -15,7 +15,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.Bullet;
 import com.mygdx.game.MyGdxGame;
@@ -59,6 +61,7 @@ public class GameScreen extends ScreenAdapter {
     private Stage stage;
     private Button2 resumeButton;
     private Button2 exitButton;
+    private Label pauseText;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -87,11 +90,16 @@ public class GameScreen extends ScreenAdapter {
         // Initialize HUD
         hud = new HUD(100); // Max health is 100
 
+
         // Initialize pause screen
         skin = new Skin(Gdx.files.internal("sample.json"));
         stage = new Stage();
-        resumeButton = new Button2("Resume", 100, 100, skin);
-        exitButton = new Button2("Exit", 200, 100, skin);
+
+        resumeButton = new Button2("Resume", 250, 250, skin);
+        exitButton = new Button2("Exit", 350, 250, skin);
+        pauseText = new Label("Game is paused!", skin);
+        pauseText.setPosition(238, 300);
+        stage.addActor(pauseText);
         stage.addActor(resumeButton.getButton2());
         stage.addActor(exitButton.getButton2());
     }

@@ -2,6 +2,7 @@ package com.mygdx.game.screens;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.Managers.Monster;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
@@ -51,10 +53,13 @@ public class GameScreen extends ScreenAdapter {
     private PointLight suga;
 
     // Asher Pax
+    private Monster monster;
 
-
-    public GameScreen(MyGdxGame context) {
+    public GameScreen(MyGdxGame context)
+    {
         this.context = context;
+        // asher pax
+        monster = new Monster(this, map, world, player.getPosition().y, player.getPosition().x);
     }
 
 
@@ -76,12 +81,14 @@ public class GameScreen extends ScreenAdapter {
         map.drawLayerTextures(batch, currentFrame);
         batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
         // stove render
+        monster.draw(batch);
         batch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             context.setScreen(ScreenType.LOADING);
         }
         rayHandler.render();
+
     }
 
     @Override
@@ -145,6 +152,8 @@ public class GameScreen extends ScreenAdapter {
         rayHandler.setAmbientLight(.2f);
 
         player.inputUpdate(delta);
+
+        monster.update(delta); // asher pax
         cameraUpdate(delta);
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);

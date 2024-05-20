@@ -64,9 +64,7 @@ public class GameScreen extends ScreenAdapter {
     private boolean escapePressed = false;
     private Skin skin;
     private Stage stage;
-    private Button2 resumeButton;
-    private Button2 exitButton;
-    private Label pauseText;
+    private Label paused;
 
     // asher pax
     private Monster monster;
@@ -109,18 +107,18 @@ public class GameScreen extends ScreenAdapter {
         root.setFillParent(true);
         stage.addActor(root);
 
-        root.pad(20);
+        paused = new Label("Game is paused", skin);
+        root.pad(200);
         Table leftButtons = new Table();
         leftButtons.add(createButton("Resume")).fillX().uniformX().padBottom(50).row();
         Table rightButtons = new Table();
         rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(50).row();
 
-        root.add(leftButtons).expandX().left().uniform().padRight(20);
-        root.add().expandX();
+        root.add(leftButtons).expandX().left().uniform().padRight(10);
+        root.add(paused).expandX().left().uniform().padTop(-150);
         root.add(rightButtons).expand().right().uniform();
 
         Gdx.input.setInputProcessor(stage);
-
 
 
 //        // Initialize pause screen

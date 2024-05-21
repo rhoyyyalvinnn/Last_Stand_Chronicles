@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -26,10 +26,11 @@ public class MenuScreen implements Screen {
     private Music backgroundMusic;
     private final MyGdxGame context;
     protected Animation<TextureRegion> animation;
+    private Texture newgame, loadgame, setting, exit, hoverNewgame;
+    private boolean isHoveringNewGame;
 
     public MenuScreen(final MyGdxGame context) {
         this.context = context;
-
     }
 
     @Override
@@ -42,63 +43,47 @@ public class MenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("sample.json"));
         batch = new SpriteBatch();
-        background = new Texture(Gdx.files.internal("loading/nindot.png"));
+        background = new Texture(Gdx.files.internal("menu/nindotmenu.png"));
+
+        newgame = new Texture(Gdx.files.internal("menu/1.png"));
+        loadgame = new Texture(Gdx.files.internal("menu/1.png"));
+        setting = new Texture(Gdx.files.internal("menu/1.png"));
+        exit = new Texture(Gdx.files.internal("menu/1.png"));
+        hoverNewgame = new Texture(Gdx.files.internal("menu/1_hover.png"));
+
+        Image newGameImage = new Image(newgame);
+        Image loadgameImage = new Image(newgame);
+        Image settingImage = new Image(newgame);
+        Image exitImage = new Image(newgame);
+        Image newGameImageHover = new Image(hoverNewgame);
+
         SoundManager.create();
         SoundManager.getBackgroundMusic().setLooping(true);
         SoundManager.getBackgroundMusic().play();
 
-        Table root = new Table();
-        root.setFillParent(true);
-        stage.addActor(root);
+        newGameImage.setPosition(50, 200);
+        loadgameImage.setPosition(50, 150);
+        settingImage.setPosition(50, 100);
+        exitImage.setPosition(50, 50);
 
-        root.pad(20);
-
-        // Left side buttons
-        Table leftButtons = new Table();
-        leftButtons.add(createButton("New Game")).fillX().uniformX().padBottom(20).row();
-        leftButtons.add(createButton("Load Game")).fillX().uniformX().padBottom(20).row();
-
-        // Right side buttons
-        Table rightButtons = new Table();
-        rightButtons.add(createButton("Settings")).fillX().uniformX().padBottom(20).row();
-        rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(20).row();
-
-        // Aligning buttons horizontally in the center
-        root.add(leftButtons).expandX().left().uniform().padRight(20);
-        root.add().expandX();
-        root.add(rightButtons).expandX().right().uniform();
+        stage.addActor(newGameImage);
+        stage.addActor(loadgameImage);
+        stage.addActor(settingImage);
+        stage.addActor(exitImage);
 
         Gdx.input.setInputProcessor(stage);
-    }
 
-    private TextButton createButton(String text) {
-        TextButton button = new TextButton(text, skin);
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (text.equals("Settings")) {
-                    context.setScreen(ScreenType.SETTING); // Switch to settings screen
-                }
-                if(text.equals("New Game")){
-                    context.setScreen(ScreenType.GAME);
-                }else if (text.equals("Exit")) {
-                    Gdx.app.exit(); // Exit the application
-                }
-
-                // Add logic for other buttons if needed
-            }
-
+        newGameImage.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
-                button.setColor(1f, 1f, 1f, 0.7f); // Set button color to semi-transparent white when hovered
+                isHoveringNewGame = true;
             }
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
-                button.setColor(1f, 1f, 1f, 1f); // Set button color back to normal when not hovered
+                isHoveringNewGame = false;
             }
         });
-        return button;
     }
 
     @Override
@@ -108,6 +93,7 @@ public class MenuScreen implements Screen {
 
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(isHoveringNewGame ? hoverNewgame : newgame, 50, 200);
         batch.end();
 
         stage.act(delta);

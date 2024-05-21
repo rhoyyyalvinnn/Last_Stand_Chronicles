@@ -61,7 +61,7 @@ public class LoadingScreen extends ScreenAdapter implements InputProcessor {
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
 
-        Gdx.input.setInputProcessor(this);
+
 
         skin = new Skin(Gdx.files.internal("sample.json"));
         stage = new Stage(new ScreenViewport());
@@ -97,6 +97,7 @@ public class LoadingScreen extends ScreenAdapter implements InputProcessor {
                 float xPosition = progress * (Gdx.graphics.getWidth() - currentFrame.getRegionWidth());
                 float yPosition = (Gdx.graphics.getHeight()/7f)-30;
                 batch.draw(currentFrame, xPosition, yPosition,currentFrame.getRegionWidth()*2,currentFrame.getRegionHeight()*2);
+
             }
         }
         batch.end();
@@ -178,6 +179,7 @@ public class LoadingScreen extends ScreenAdapter implements InputProcessor {
             if (!uiTable.getChildren().contains(pressAnyButtonInfo, true)) {
                 uiTable.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("loading/NINDOT2.png"))));
                 assetsLoaded = true;
+                Gdx.input.setInputProcessor(this);
             }
         }
     }

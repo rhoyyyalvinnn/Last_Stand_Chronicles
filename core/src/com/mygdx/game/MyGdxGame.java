@@ -36,7 +36,7 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 
 	@Override
 	public void onSplashScreenFinished() {
-		setScreen(ScreenType.LOADING);
+		setScreen(ScreenType.MENU);
 	}
 
 	@Override

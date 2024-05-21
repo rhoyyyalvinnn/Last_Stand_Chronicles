@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -17,10 +18,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.Bullet;
-import com.mygdx.game.Managers.Monster;
+import com.mygdx.game.Managers.Enemies;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.MapManager;
 import com.mygdx.game.Managers.PlayerManager;
@@ -51,6 +51,7 @@ public class GameScreen extends ScreenAdapter {
     private PointLight suga;
 
     private Texture bulletTexture;
+
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
     private HUD hud;
@@ -65,7 +66,12 @@ public class GameScreen extends ScreenAdapter {
     private Label pauseText;
 
     // asher pax
-    private Monster monster;
+    // game objects
+    private Enemies enemy;
+    private TextureRegion enemyTextureRegion;
+    private TextureAtlas textureAtlas;
+
+
 
     public GameScreen(MyGdxGame context) {
 
@@ -88,7 +94,7 @@ public class GameScreen extends ScreenAdapter {
         batch = player.getBatch();
 
         // asher pax monster initialization
-        monster = new Monster(this, map, world, player.getPosition().x, player.getPosition().y);
+
 
         map = new MapManager(world);
 
@@ -112,6 +118,14 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(pauseText);
         stage.addActor(resumeButton.getButton2());
         stage.addActor(exitButton.getButton2());
+        //Texture region sa enemies
+
+        textureAtlas = new TextureAtlas("assets/enemies/Spirit.atlas");
+        enemyTextureRegion = textureAtlas.findRegion("walk_down");
+
+        // game objects // enemies
+        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4,10, 10, enemyTextureRegion);
+
     }
 
     @Override
@@ -142,7 +156,7 @@ public class GameScreen extends ScreenAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             map.drawLayerTextures(batch, currentFrame);
-            monster.draw(batch);
+            enemy.draw(batch);
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
             batch.end();
 
@@ -207,8 +221,7 @@ public class GameScreen extends ScreenAdapter {
         rayHandler.setAmbientLight(.2f);
 
         player.inputUpdate(delta);
-        // asher pax
-        monster.update(delta);
+
         cameraUpdate(delta);
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);

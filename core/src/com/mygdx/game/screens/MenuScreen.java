@@ -45,12 +45,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-
-
-
-
-
-
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("sample.json"));
         batch = new SpriteBatch();
@@ -60,13 +54,13 @@ public class MenuScreen implements Screen {
         loadgame = new Texture(Gdx.files.internal("menu/1.png"));
         setting = new Texture(Gdx.files.internal("menu/1.png"));
         exit = new Texture(Gdx.files.internal("menu/1.png"));
-        //hoverNewgame = new Texture(Gdx.files.internal("menu/1_hover.png"));
+        hoverNewgame = new Texture(Gdx.files.internal("menu/1_hover.png"));
 
         Image newGameImage = new Image(newgame);
         Image loadgameImage = new Image(newgame);
         Image settingImage = new Image(newgame);
         Image exitImage = new Image(newgame);
-        //Image newGameImageHover = new Image(hoverNewgame);
+        Image newGameImageHover = new Image(hoverNewgame);
 
         SoundManager.create();
         SoundManager.getBackgroundMusic().setLooping(true);

@@ -19,8 +19,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.MyGdxGame;
 import jdbc.MySQLConnection;
+import jdk.javadoc.internal.doclets.formats.html.markup.Text;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -32,6 +34,7 @@ public class LoginScreen implements Screen {
     private SpriteBatch batch;
     private Texture background;
     private ShapeRenderer shapeRenderer;
+    private Label actionTarget;
 
     public LoginScreen(MyGdxGame context) {
         this.context = context;
@@ -77,18 +80,19 @@ public class LoginScreen implements Screen {
         final TextField passwordField = new TextField("", skin);
         passwordField.setPasswordCharacter('*');
         passwordField.setPasswordMode(true);
-
+        actionTarget  = new Label("", skin,"font", Color.RED);
         TextButton loginButton = new TextButton("Login", skin);
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 String username = usernameField.getText();
                 String password = passwordField.getText();
+
                 // Add logic to handle login
                 if (authenticate(username, password)) {
                     context.setScreen(new MenuScreen(context)); // Switch to the menu screen on successful login
                 } else {
-                    System.out.println("Invalid username or password.");
+                    actionTarget.setText("Invalid Username or password");
                 }
             }
         });
@@ -103,6 +107,8 @@ public class LoginScreen implements Screen {
             }
         });
 
+
+
         // Position the form elements within the table
         table.center();
         table.add(usernameLabel).pad(10);
@@ -113,10 +119,31 @@ public class LoginScreen implements Screen {
         table.row();
         table.add(loginButton).colspan(2).pad(10).row();
         table.add(registerLabel).colspan(2).pad(10).center().bottom();
+        table.row();
+        table.add(actionTarget).colspan(2).pad(10).center().bottom();
+
+
 
     }
 
     private boolean authenticate(String username, String password) {
+
+        String name = "";
+        String pass = "";
+        try(Connection connection = MySQLConnection.getConnection();
+            Statement statement = connection.createStatement()){
+            String selectQuery = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
+            ResultSet result = statement.executeQuery(selectQuery);
+
+            if(result.next()){
+                return true;
+            } else {
+                return false;
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
         // Implement your authentication logic here
         // For demonstration, let's assume any non-empty username and password are valid
         return !username.isEmpty() && !password.isEmpty();
@@ -133,7 +160,7 @@ public class LoginScreen implements Screen {
 
         // Calculate position and draw the rectangle behind the form
         float rectangleWidth = 500;
-        float rectangleHeight = 250;
+        float rectangleHeight = 350;
         float rectangleX = (Gdx.graphics.getWidth() - rectangleWidth) / 2;
         float rectangleY = (Gdx.graphics.getHeight() - rectangleHeight) / 2;
 

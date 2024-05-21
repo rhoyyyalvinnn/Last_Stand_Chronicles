@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,6 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
+import jdbc.MySQLConnection;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class RegisterScreen implements Screen {
 
@@ -25,6 +32,7 @@ public class RegisterScreen implements Screen {
     private MyGdxGame context;
     private SpriteBatch batch;
     private Texture background;
+    private ShapeRenderer shapeRenderer;
 
     public RegisterScreen(MyGdxGame context) {
         this.context = context;
@@ -32,6 +40,7 @@ public class RegisterScreen implements Screen {
         skin = new Skin(Gdx.files.internal("sample.json"));
         batch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("loading/balo.png"));
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -75,9 +84,26 @@ public class RegisterScreen implements Screen {
 
                 // Validate input (optional)
                 if (validateInput(firstName, lastName, email, username, password)) {
+                    try(Connection connection = MySQLConnection.getConnection()){
+                        String insertUserInfo = "INSERT INTO users (fname, lname, email, username,password) VALUES (?,?,?,?,?)";
+                        try(PreparedStatement userStatement = connection.prepareStatement(insertUserInfo)){
+                            userStatement.setString(1,firstName);
+                            userStatement.setString(2,lastName);
+                            userStatement.setString(3,email);
+                            userStatement.setString(4,username);
+                            userStatement.setString(5,password);
+                            int insertedRows =userStatement.executeUpdate();
+                            if (insertedRows > 0) {
+                                System.out.println("Enrollment Inserted Successfully");
+                            }
+                        }
+                    } catch (SQLException e) {
+                        // Roll back the transaction if any operation fails
+                        e.printStackTrace();
+                    }
                     // Perform registration logic (e.g., save to database)
                     System.out.println("Registration successful!");
-                    context.setScreen(new MenuScreen(context)); // Switch to menu screen after registration
+                    context.setScreen(new LoginScreen(context)); // Switch to menu screen after registration
                 } else {
                     System.out.println("Invalid input. Please check your information.");
                 }
@@ -96,24 +122,23 @@ public class RegisterScreen implements Screen {
 
         // Position the form elements within the table
         table.center();
-        table.add(firstNameLabel).pad(10);
-        table.add(firstNameField).width(200).pad(10);
+        table.add(firstNameLabel).align(Align.left).pad(10);
+        table.add(firstNameField).width(200).pad(10).row();
         table.row();
-        table.add(lastNameLabel).pad(10);
-        table.add(lastNameField).width(200).pad(10);
+        table.add(lastNameLabel).align(Align.left).pad(10);
+        table.add(lastNameField).width(200).pad(10).row();
         table.row();
-        table.add(emailLabel).pad(10);
-        table.add(emailField).width(200).pad(10);
+        table.add(emailLabel).align(Align.left).pad(10);
+        table.add(emailField).width(200).pad(10).row();
         table.row();
-        table.add(usernameLabel).pad(10);
-        table.add(usernameField).width(200).pad(10);
+        table.add(usernameLabel).align(Align.left).pad(10);
+        table.add(usernameField).width(200).pad(10).row();
         table.row();
-        table.add(passwordLabel).pad(10);
-        table.add(passwordField).width(200).pad(10);
+        table.add(passwordLabel).align(Align.left).pad(10);
+        table.add(passwordField).width(200).pad(10).row();
         table.row();
         table.add(registerButton).colspan(2).pad(10).row();
         table.add(loginLabel).colspan(2).pad(10);
-
     }
 
     private boolean validateInput(String firstName, String lastName, String email, String username, String password) {
@@ -130,6 +155,17 @@ public class RegisterScreen implements Screen {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
+
+        // Calculate position and draw the rectangle behind the form
+        float rectangleWidth = 500;
+        float rectangleHeight = 600;
+        float rectangleX = (Gdx.graphics.getWidth() - rectangleWidth) / 2;
+        float rectangleY = (Gdx.graphics.getHeight() - rectangleHeight) / 2;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(new Color(1, 1, 1, 0.7f)); // Semi-transparent white
+        shapeRenderer.rect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
+        shapeRenderer.end();
 
         stage.act(delta);
         stage.draw();

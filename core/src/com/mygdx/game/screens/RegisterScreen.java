@@ -20,7 +20,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import jdbc.MySQLConnection;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,6 +32,7 @@ public class RegisterScreen implements Screen {
     private SpriteBatch batch;
     private Texture background;
     private ShapeRenderer shapeRenderer;
+    private Label passwordDiff;
 
     public RegisterScreen(MyGdxGame context) {
         this.context = context;
@@ -72,6 +72,13 @@ public class RegisterScreen implements Screen {
         passwordField.setPasswordCharacter('*');
         passwordField.setPasswordMode(true);
 
+        Label confirmPasswordLabel = new Label("Confirm Password:", skin);
+        final TextField confirmPasswordField = new TextField("", skin);
+        confirmPasswordField.setPasswordCharacter('*');
+        confirmPasswordField.setPasswordMode(true);
+
+        passwordDiff = new Label("", skin, "font", Color.RED);
+
         TextButton registerButton = new TextButton("Register", skin);
         registerButton.addListener(new ClickListener() {
             @Override
@@ -81,29 +88,28 @@ public class RegisterScreen implements Screen {
                 String email = emailField.getText();
                 String username = usernameField.getText();
                 String password = passwordField.getText();
+                String confirmPassword = confirmPasswordField.getText();
 
-                // Validate input (optional)
-                if (validateInput(firstName, lastName, email, username, password)) {
-                    try(Connection connection = MySQLConnection.getConnection()){
-                        String insertUserInfo = "INSERT INTO users (fname, lname, email, username,password) VALUES (?,?,?,?,?)";
-                        try(PreparedStatement userStatement = connection.prepareStatement(insertUserInfo)){
-                            userStatement.setString(1,firstName);
-                            userStatement.setString(2,lastName);
-                            userStatement.setString(3,email);
-                            userStatement.setString(4,username);
-                            userStatement.setString(5,password);
-                            int insertedRows =userStatement.executeUpdate();
+                // Validate input and password confirmation
+                if (validateInput(firstName, lastName, email, username, password, confirmPassword)) {
+                    try (Connection connection = MySQLConnection.getConnection()) {
+                        String insertUserInfo = "INSERT INTO users (fname, lname, email, username, password) VALUES (?, ?, ?, ?, ?)";
+                        try (PreparedStatement userStatement = connection.prepareStatement(insertUserInfo)) {
+                            userStatement.setString(1, firstName);
+                            userStatement.setString(2, lastName);
+                            userStatement.setString(3, email);
+                            userStatement.setString(4, username);
+                            userStatement.setString(5, password);
+                            int insertedRows = userStatement.executeUpdate();
                             if (insertedRows > 0) {
                                 System.out.println("Enrollment Inserted Successfully");
+                                context.setScreen(new LoginScreen(context)); // Switch to login screen after successful registration
                             }
                         }
                     } catch (SQLException e) {
                         // Roll back the transaction if any operation fails
                         e.printStackTrace();
                     }
-                    // Perform registration logic (e.g., save to database)
-                    System.out.println("Registration successful!");
-                    context.setScreen(new LoginScreen(context)); // Switch to menu screen after registration
                 } else {
                     System.out.println("Invalid input. Please check your information.");
                 }
@@ -137,13 +143,23 @@ public class RegisterScreen implements Screen {
         table.add(passwordLabel).align(Align.left).pad(10);
         table.add(passwordField).width(200).pad(10).row();
         table.row();
+        table.add(confirmPasswordLabel).align(Align.left).pad(10);
+        table.add(confirmPasswordField).width(200).pad(10).row();
+        table.row();
         table.add(registerButton).colspan(2).pad(10).row();
-        table.add(loginLabel).colspan(2).pad(10);
+        table.add(loginLabel).colspan(2).pad(10).row();
+        table.add(passwordDiff).colspan(2).pad(10).center().bottom();
     }
 
-    private boolean validateInput(String firstName, String lastName, String email, String username, String password) {
-        // Implement your validation logic here
-        // For demonstration, let's assume basic validation for non-empty fields
+    private boolean validateInput(String firstName, String lastName, String email, String username, String password, String confirmPassword) {
+        // Check if passwords match
+        if (!password.equals(confirmPassword)) {
+            passwordDiff.setText("Inputted passwords do not match");
+            return false;
+        } else {
+            passwordDiff.setText("");
+        }
+        // Basic validation for non-empty fields
         return !firstName.isEmpty() && !lastName.isEmpty() && !email.isEmpty() && !username.isEmpty() && !password.isEmpty();
     }
 
@@ -158,7 +174,7 @@ public class RegisterScreen implements Screen {
 
         // Calculate position and draw the rectangle behind the form
         float rectangleWidth = 500;
-        float rectangleHeight = 600;
+        float rectangleHeight = 750;
         float rectangleX = (Gdx.graphics.getWidth() - rectangleWidth) / 2;
         float rectangleY = (Gdx.graphics.getHeight() - rectangleHeight) / 2;
 

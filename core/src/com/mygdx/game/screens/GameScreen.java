@@ -117,19 +117,14 @@ public class GameScreen extends ScreenAdapter {
         root.row();
         root.add(createButton("Exit")).center().width(600).uniformX().pad(3).row();
 
-
-
-
         Gdx.input.setInputProcessor(stage);
-
-
-        //Texture region sa enemies
 
         textureAtlas = new TextureAtlas("enemies/Spirit.atlas");
         enemyTextureRegion = textureAtlas.findRegion("walk_down");
 
         // game objects // enemies
         enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4,10, 10, enemyTextureRegion);
+
     }
 
 
@@ -253,6 +248,8 @@ public class GameScreen extends ScreenAdapter {
         rayHandler.update();
         rayHandler.setAmbientLight(.2f);
         player.inputUpdate(delta);
+        // asher pax
+
         cameraUpdate(delta);
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);

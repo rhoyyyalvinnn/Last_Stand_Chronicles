@@ -7,12 +7,15 @@ public enum ScreenType {
     LOADING(LoadingScreen.class),
     SETTING(SettingScreen.class),
     MENU(MenuScreen.class),
-    SPLASH2(SplashTWO.class);
+    SPLASH2(SplashTWO.class),
+    LOGIN(LoginScreen.class);  // Add the LOGIN screen type here
 
-    private final Class <? extends Screen> screenClass;
+    private final Class<? extends Screen> screenClass;
+
     ScreenType(final Class<? extends Screen> screenClass) {
         this.screenClass = screenClass;
     }
+
     public Class<? extends Screen> getScreenClass() {
         return screenClass;
     }

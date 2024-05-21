@@ -18,7 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.SoundManager;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import jdbc.MySQLConnection;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MenuScreen implements Screen {
     private Stage stage;

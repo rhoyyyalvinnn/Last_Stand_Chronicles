@@ -67,7 +67,7 @@ public class SplashTWO implements Screen {
         // Check if animation has completed a loop
         if (elapsedTime >= transitionDuration) {
             // Transition to the next screen
-            context.setScreen(ScreenType.MENU);
+            context.setScreen(ScreenType.LOGIN);
         }
     }
 

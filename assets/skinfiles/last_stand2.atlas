@@ -1,0 +1,40 @@
+
+last_stand2.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+buttonnotclick
+  rotate: false
+  xy: 515, 717
+  size: 268, 195
+  split: 47, 56, 52, 50
+  pad: 0, 0, 0, 0
+  orig: 268, 195
+  offset: 0, 0
+  index: -1
+hover.9
+  rotate: false
+  xy: 1, 1
+  size: 268, 195
+  split: 39, 52, 53, 43
+  pad: 0, 0, 0, 0
+  orig: 268, 195
+  offset: 0, 0
+  index: -1
+label
+  rotate: false
+  xy: 1, 198
+  size: 280, 200
+  split: 35, 35, 25, 41
+  pad: 36, 35, 34, 28
+  orig: 280, 200
+  offset: 0, 0
+  index: -1
+kapoya
+  rotate: false
+  xy: 1, 400
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1

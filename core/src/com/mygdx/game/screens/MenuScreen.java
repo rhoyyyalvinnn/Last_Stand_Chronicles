@@ -46,7 +46,7 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
-        skin = new Skin(Gdx.files.internal("skinfiles/last_stand.json"));
+        skin = new Skin(Gdx.files.internal("skinfiles/last_stand2.json"));
         batch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("loading/nindot.png"));
 

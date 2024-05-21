@@ -31,17 +31,17 @@ public class RegisterScreen implements Screen {
     private MyGdxGame context;
     private SpriteBatch batch;
     private Texture background;
-    private ShapeRenderer shapeRenderer;
+
     private Label passwordDiff;
     private Label emptyFieldsWarning; // Label for empty fields warning
 
     public RegisterScreen(MyGdxGame context) {
         this.context = context;
         stage = new Stage(new ScreenViewport());
-        skin = new Skin(Gdx.files.internal("sample.json"));
+        skin = new Skin(Gdx.files.internal("skinfiles/last_stand2.json"));
         batch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("loading/balo.png"));
-        shapeRenderer = new ShapeRenderer();
+
     }
 
     @Override
@@ -52,9 +52,9 @@ public class RegisterScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        Label titleLabel = new Label("Register", skin, "title");
+        Label titleLabel = new Label("Register", skin);
         titleLabel.setAlignment(Align.center);
-        table.add(titleLabel).colspan(2).padBottom(30).row();
+
 
         Label firstNameLabel = new Label("First Name:", skin);
         final TextField firstNameField = new TextField("", skin);
@@ -78,10 +78,10 @@ public class RegisterScreen implements Screen {
         confirmPasswordField.setPasswordCharacter('*');
         confirmPasswordField.setPasswordMode(true);
 
-        passwordDiff = new Label("", skin, "font", Color.RED);
-        emptyFieldsWarning = new Label("", skin, "font", Color.RED); // Initialize the empty fields warning label
+        passwordDiff = new Label("", skin, "kapoya", Color.RED);
+        emptyFieldsWarning = new Label("", skin, "kapoya", Color.RED); // Initialize the empty fields warning label
 
-        TextButton registerButton = new TextButton("Register", skin);
+        TextButton registerButton = new TextButton("  Register  ", skin);
         registerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -119,7 +119,7 @@ public class RegisterScreen implements Screen {
         });
 
         // Add clickable label for login
-        Label loginLabel = new Label("Already have an Account? Log in here", skin, "font", Color.BLUE);
+        Label loginLabel = new Label("Already have an Account? Log in here", skin, "kapoya", Color.BLUE);
         loginLabel.setAlignment(Align.center);
         loginLabel.addListener(new ClickListener() {
             @Override
@@ -129,31 +129,34 @@ public class RegisterScreen implements Screen {
         });
 
         // Position the form elements within the table
+        table.add(titleLabel).height(100).colspan(2).padBottom(1).row();
+        //
         table.center();
-        table.add(firstNameLabel).align(Align.left).pad(10);
-        table.add(firstNameField).width(200).pad(10).row();
+        table.add(firstNameLabel).width(600).height(100).align(Align.left).pad(5);
+        table.add(firstNameField).width(600).height(100).pad(5).row();
         table.row();
-        table.add(lastNameLabel).align(Align.left).pad(10);
-        table.add(lastNameField).width(200).pad(10).row();
+        table.add(lastNameLabel).width(600).height(100).height(100).align(Align.left).pad(5);
+        table.add(lastNameField).width(600).height(100).pad(5).row();
         table.row();
-        table.add(emailLabel).align(Align.left).pad(10);
-        table.add(emailField).width(200).pad(10).row();
+        table.add(emailLabel).width(600).height(100).height(100).align(Align.left).pad(5);
+        table.add(emailField).width(600).height(100).pad(5).row();
         table.row();
-        table.add(usernameLabel).align(Align.left).pad(10);
-        table.add(usernameField).width(200).pad(10).row();
+        table.add(usernameLabel).width(600).height(100).height(100).align(Align.left).pad(5);
+        table.add(usernameField).width(600).height(100).pad(5).row();
         table.row();
-        table.add(passwordLabel).align(Align.left).pad(10);
-        table.add(passwordField).width(200).pad(10).row();
+        table.add(passwordLabel).width(600).height(100).height(100).align(Align.left).pad(5);
+        table.add(passwordField).width(600).height(100).pad(5).row();
         table.row();
-        table.add(confirmPasswordLabel).align(Align.left).pad(10);
-        table.add(confirmPasswordField).width(200).pad(10).row();
+        table.add(confirmPasswordLabel).width(600).height(100).align(Align.left).pad(5);
+        table.add(confirmPasswordField).width(600).height(100).pad(5).row();
+        System.out.println(confirmPasswordField.getWidth());
         table.row();
-        table.add(registerButton).colspan(2).pad(10).row();
-        table.add(loginLabel).colspan(2).pad(10).row();
+        table.add(registerButton).width(350).height(120).colspan(2).pad(5).row();
+        table.add(loginLabel).colspan(2).pad(5).row();
         table.row();
-        table.add(passwordDiff).colspan(2).pad(10).center().bottom().row();
+        table.add(passwordDiff).colspan(2).center().bottom().row();
         table.row();
-        table.add(emptyFieldsWarning).colspan(2).pad(10).center().bottom(); // Add the empty fields warning label to the table
+        table.add(emptyFieldsWarning).colspan(2).pad(5).center().bottom(); // Add the empty fields warning label to the table
     }
 
     private boolean validateInput(String firstName, String lastName, String email, String username, String password, String confirmPassword) {
@@ -187,16 +190,7 @@ public class RegisterScreen implements Screen {
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
-        // Calculate position and draw the rectangle behind the form
-        float rectangleWidth = 500;
-        float rectangleHeight = 750;
-        float rectangleX = (Gdx.graphics.getWidth() - rectangleWidth) / 2;
-        float rectangleY = (Gdx.graphics.getHeight() - rectangleHeight) / 2;
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(1, 1, 1, 0.7f)); // Semi-transparent white
-        shapeRenderer.rect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
-        shapeRenderer.end();
 
         stage.act(delta);
         stage.draw();

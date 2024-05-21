@@ -82,7 +82,7 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         bulletTexture = new Texture("tile000.png");
         stage = new Stage(new ScreenViewport()); //initialize stage
-        skin = new Skin(Gdx.files.internal("sample.json")); //initialize skin
+        skin = new Skin(Gdx.files.internal("skinfiles/last_stand2.json")); //initialize skin
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE, Gdx.graphics.getHeight() / SCALE);
 
@@ -108,15 +108,17 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(root);
 
         paused = new Label("Game is paused", skin);
-        root.pad(200);
-        Table leftButtons = new Table();
-        leftButtons.add(createButton("Resume")).fillX().uniformX().padBottom(50).row();
-        Table rightButtons = new Table();
-        rightButtons.add(createButton("Exit")).fillX().uniformX().padBottom(50).row();
+        root.center();
+        root.add(paused).width(600).expandX().center().uniform();
 
-        root.add(leftButtons).expandX().left().uniform().padRight(10);
-        root.add(paused).expandX().left().uniform().padTop(-150);
-        root.add(rightButtons).expand().right().uniform();
+        root.row();
+        root.add(createButton("Resume")).center().width(600).uniformX().pad(3).row();
+
+        root.row();
+        root.add(createButton("Exit")).center().width(600).uniformX().pad(3).row();
+
+
+
 
         Gdx.input.setInputProcessor(stage);
 
@@ -142,7 +144,7 @@ public class GameScreen extends ScreenAdapter {
                     Gdx.app.exit(); // Exit the application
                 }
 
-                // Add logic for other buttons if needed
+
             }
 
             @Override
@@ -169,8 +171,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (isPaused) {
-            Gdx.gl.glClearColor(1, 1, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 
             stage.act(delta);
             stage.draw();

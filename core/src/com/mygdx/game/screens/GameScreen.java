@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -23,11 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HUD;
-import com.mygdx.game.Managers.Bullet;
-import com.mygdx.game.Managers.Monster;
+import com.mygdx.game.Managers.*;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.Managers.MapManager;
-import com.mygdx.game.Managers.PlayerManager;
 import com.mygdx.game.Button2;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -67,7 +65,11 @@ public class GameScreen extends ScreenAdapter {
     private Label paused;
 
     // asher pax
-    private Monster monster;
+
+    // game objects
+    private Enemies enemy;
+    private TextureRegion enemyTextureRegion;
+    private TextureAtlas textureAtlas;
 
     public GameScreen(MyGdxGame context) {
 
@@ -90,8 +92,6 @@ public class GameScreen extends ScreenAdapter {
         player.run();
         batch = player.getBatch();
 
-        // asher pax monster initialization
-        monster = new Monster(this, map, world, player.getPosition().x, player.getPosition().y);
 
         map = new MapManager(world);
 
@@ -121,24 +121,13 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage);
 
 
-//        // Initialize pause screen
-//        skin = new Skin(Gdx.files.internal("sample.json"));
-//        stage = new Stage();
-//
-//        resumeButton = new Button2("Resume", 250, 250, skin);
-//        exitButton = new Button2("Exit", 350, 250, skin);
-//        pauseText = new Label("Game is paused!", skin);
-//        pauseText.setPosition(238, 300);
-//        stage.addActor(pauseText);
-//        stage.addActor(resumeButton.getButton2());
-//        stage.addActor(exitButton.getButton2());
-//
-//        resumeButton.getButton2().addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                isPaused = false;
-//            }
-//        });
+        //Texture region sa enemies
+
+        textureAtlas = new TextureAtlas("enemies/Spirit.atlas");
+        enemyTextureRegion = textureAtlas.findRegion("walk_down");
+
+        // game objects // enemies
+        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4,10, 10, enemyTextureRegion);
     }
 
 
@@ -198,7 +187,7 @@ public class GameScreen extends ScreenAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             map.drawLayerTextures(batch, currentFrame);
-            monster.draw(batch);
+            enemy.draw(batch);
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
             batch.end();
 
@@ -262,10 +251,7 @@ public class GameScreen extends ScreenAdapter {
 
         rayHandler.update();
         rayHandler.setAmbientLight(.2f);
-
         player.inputUpdate(delta);
-        // asher pax
-        monster.update(delta);
         cameraUpdate(delta);
         map.tmr.setView(camera);
         batch.setProjectionMatrix(camera.combined);

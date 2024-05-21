@@ -33,6 +33,7 @@ public class RegisterScreen implements Screen {
     private Texture background;
     private ShapeRenderer shapeRenderer;
     private Label passwordDiff;
+    private Label emptyFieldsWarning; // Label for empty fields warning
 
     public RegisterScreen(MyGdxGame context) {
         this.context = context;
@@ -78,6 +79,7 @@ public class RegisterScreen implements Screen {
         confirmPasswordField.setPasswordMode(true);
 
         passwordDiff = new Label("", skin, "font", Color.RED);
+        emptyFieldsWarning = new Label("", skin, "font", Color.RED); // Initialize the empty fields warning label
 
         TextButton registerButton = new TextButton("Register", skin);
         registerButton.addListener(new ClickListener() {
@@ -102,7 +104,7 @@ public class RegisterScreen implements Screen {
                             userStatement.setString(5, password);
                             int insertedRows = userStatement.executeUpdate();
                             if (insertedRows > 0) {
-                                System.out.println("Enrollment Inserted Successfully");
+                                System.out.println("User Inserted Successfully");
                                 context.setScreen(new LoginScreen(context)); // Switch to login screen after successful registration
                             }
                         }
@@ -148,19 +150,32 @@ public class RegisterScreen implements Screen {
         table.row();
         table.add(registerButton).colspan(2).pad(10).row();
         table.add(loginLabel).colspan(2).pad(10).row();
-        table.add(passwordDiff).colspan(2).pad(10).center().bottom();
+        table.row();
+        table.add(passwordDiff).colspan(2).pad(10).center().bottom().row();
+        table.row();
+        table.add(emptyFieldsWarning).colspan(2).pad(10).center().bottom(); // Add the empty fields warning label to the table
     }
 
     private boolean validateInput(String firstName, String lastName, String email, String username, String password, String confirmPassword) {
+        boolean isValid = true;
+
         // Check if passwords match
         if (!password.equals(confirmPassword)) {
             passwordDiff.setText("Inputted passwords do not match");
-            return false;
+            isValid = false;
         } else {
             passwordDiff.setText("");
         }
-        // Basic validation for non-empty fields
-        return !firstName.isEmpty() && !lastName.isEmpty() && !email.isEmpty() && !username.isEmpty() && !password.isEmpty();
+
+        // Check if any field is empty
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            emptyFieldsWarning.setText("Please fill in the blank text fields");
+            isValid = false;
+        } else {
+            emptyFieldsWarning.setText("");
+        }
+
+        return isValid;
     }
 
     @Override

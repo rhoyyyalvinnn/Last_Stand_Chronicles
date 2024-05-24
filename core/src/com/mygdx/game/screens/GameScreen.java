@@ -25,8 +25,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.*;
+import com.mygdx.game.Map.MapOneFactory;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.Button2;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
@@ -48,7 +48,7 @@ public class GameScreen extends ScreenAdapter {
 
     private SpriteBatch batch;
 
-    private MapManager map;
+    private MapManager mapManager;
     private RayHandler rayHandler;
     private PointLight suga;
 
@@ -72,10 +72,7 @@ public class GameScreen extends ScreenAdapter {
     private TextureAtlas textureAtlas;
 
     public GameScreen(MyGdxGame context) {
-
         this.context = context;
-        // asher pax
-//        monster = new Monster(this, map, world, player.getPosition().x, player.getPosition().y);
     }
 
     @Override
@@ -91,14 +88,14 @@ public class GameScreen extends ScreenAdapter {
         player = new PlayerManager(world);
         player.run();
         batch = player.getBatch();
+        MapOneFactory first = new MapOneFactory();
 
-
-        map = new MapManager(world);
+        mapManager = new MapManager(first, world);
 
         // Light setup
         rayHandler = new RayHandler(world);
-        suga = new PointLight(rayHandler, 50, Color.GRAY, 4, 0, 0);
-        suga.attachToBody(PlayerManager.player, .2f, 0.3f);
+        suga = new PointLight(rayHandler, 50, Color.GRAY, 5, player.getPosition().x, player.getPosition().y);
+        suga.attachToBody(PlayerManager.player);
 
         // Initialize HUD
         hud = new HUD(100); // Max health is 100
@@ -123,10 +120,8 @@ public class GameScreen extends ScreenAdapter {
         enemyTextureRegion = textureAtlas.findRegion("walk_down");
 
         // game objects // enemies
-        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4,10, 10, enemyTextureRegion);
-
+        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion);
     }
-
 
     private TextButton createButton(String text) {
         TextButton button = new TextButton(text, skin);
@@ -138,23 +133,10 @@ public class GameScreen extends ScreenAdapter {
                 } else if (text.equals("Exit")) {
                     Gdx.app.exit(); // Exit the application
                 }
-
-
-            }
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
-                button.setColor(1f, 1f, 1f, 0.7f); // Set button color to semi-transparent white when hovered
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor toActor) {
-                button.setColor(1f, 1f, 1f, 1f); // Set button color back to normal when not hovered
             }
         });
         return button;
     }
-
 
     @Override
     public void render(float delta) {
@@ -166,37 +148,39 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (isPaused) {
-
-
             stage.act(delta);
             stage.draw();
         } else {
             update(delta);
+
+            // Clear the screen
             Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
             elapsedTime += delta;
-
             Animation<TextureRegion> currentAnimation = player.determineCurrentAnimation();
             TextureRegion currentFrame = currentAnimation.getKeyFrame(elapsedTime, true);
 
+            // Begin batch rendering
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
-            map.drawLayerTextures(batch, currentFrame);
-            enemy.draw(batch);
+
+            // Draw map and player
+            mapManager.renderMap(camera); // Render the map
+            enemy.draw(batch); // Draw the player
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
+            // End batch rendering
             batch.end();
 
-            // Render health bar
-//            hud.update(delta, player.getHealth()); // Update health based on player's current health
+            // Render HUD
+         //  hud.update(delta, player.getHealth());
             hud.draw();
 
-            // Bullet render
+            // Render bullets
             rayHandler.render();
             batch.begin();
             for (Bullet bullet : bulletManager) {
                 bullet.Update(delta);
-                TextureRegion bulletFrame = bullet.getCurrentFrame();
                 if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
                     batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
                 }
@@ -211,23 +195,20 @@ public class GameScreen extends ScreenAdapter {
     }
 
     @Override
-    public void hide() {
-    }
+    public void hide() {}
 
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-    }
+    public void resume() {}
 
     @Override
     public void dispose() {
         world.dispose();
         batch.dispose();
         b2dr.dispose();
-        map.dispose();
+        mapManager.dispose();
         bulletTexture.dispose();
         skin.dispose();
         stage.dispose();
@@ -246,12 +227,10 @@ public class GameScreen extends ScreenAdapter {
         suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
 
         rayHandler.update();
-        rayHandler.setAmbientLight(.2f);
+        rayHandler.setAmbientLight(.000002f);
         player.inputUpdate(delta);
-        // asher pax
-
         cameraUpdate(delta);
-        map.tmr.setView(camera);
+        mapManager.renderMap(camera);
         batch.setProjectionMatrix(camera.combined);
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
         handleBulletInput();
@@ -262,26 +241,16 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.justTouched()) {
             Vector2 bulletStartPosition = player.getPosition().cpy();
 
-            // Get the mouse screen position
             Vector3 mouseScreenPosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            // Convert the screen position to world coordinates
             Vector3 mouseWorldPosition3 = camera.unproject(mouseScreenPosition);
             Vector2 mouseWorldPosition = new Vector2(mouseWorldPosition3.x / PPM, mouseWorldPosition3.y / PPM);
 
-            // Calculate direction
             Vector2 direction = mouseWorldPosition.cpy().sub(bulletStartPosition).nor();
-
-            // Calculate bullet velocity
             Vector2 bulletVelocity = direction.scl(bulletSpeed);
 
-            // Create and add the bullet
-            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity);
+            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity, 70f);
             bulletManager.add(myBullet);
-
         }
     }
 
-    public World getWorld() {
-        return world;
-    }
 }

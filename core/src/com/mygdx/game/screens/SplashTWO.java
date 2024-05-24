@@ -38,9 +38,7 @@ public class SplashTWO implements Screen {
         bgSprite.setSize(bgTexture.getWidth(), bgTexture.getHeight());
         bgSprite.setPosition(0, 0);
 
-        Tween.set(bgSprite, SpriteAccessor.ALPHA).target(0).start(tweenManager);
-        Tween.to(bgSprite, SpriteAccessor.ALPHA, 20).target(1).start(tweenManager);
-        Tween.to(bgSprite,SpriteAccessor.ALPHA,20).target(0).delay(2).start(tweenManager);
+
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -33,6 +34,7 @@ import box2dLight.RayHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import static com.mygdx.game.utils.Constants.PPM;
 
@@ -74,6 +76,10 @@ public class GameScreen extends ScreenAdapter {
     private Enemies enemy;
     private TextureRegion enemyTextureRegion;
     private TextureAtlas textureAtlas;
+
+    // para sa spawn mga bossing --pax
+    private float spawnTimer = 0f;
+    private final float SPAWN_INTERVAL = 1.5f;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -124,7 +130,15 @@ public class GameScreen extends ScreenAdapter {
         enemyTextureRegion = textureAtlas.findRegion("walk_down");
 
         // game objects // enemies
-        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion, player);
+//        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion, player);
+        spawnEnemies(5);
+
+//        for (int i = 0; i < 5; i++) {
+//            float enemyX = MathUtils.random(0, Gdx.graphics.getWidth());
+//            float enemyY = MathUtils.random(0, Gdx.graphics.getHeight());
+//            spawnEnemies(5);
+//            enemies.add(enemy);
+//        }
     }
 
     private TextButton createButton(String text) {
@@ -171,7 +185,11 @@ public class GameScreen extends ScreenAdapter {
 
             // Draw map and player
             mapManager.renderMap(camera); // Render the map
-            enemy.draw(batch); // draw enemy
+            // draw enemy
+            for (Enemies enemy : enemies) {
+                enemy.update(delta);
+                enemy.draw(batch);
+            }
 
 //            Iterator<Enemies> enemiesIterator = enemies.iterator();
 
@@ -220,6 +238,7 @@ public class GameScreen extends ScreenAdapter {
         bulletTexture.dispose();
         skin.dispose();
         stage.dispose();
+        
     }
 
     private void cameraUpdate(float delta) {
@@ -233,7 +252,9 @@ public class GameScreen extends ScreenAdapter {
 
         Vector2 playerPosition = player.getPosition();
         suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
-        enemy.update();
+        for(Enemies enemy: enemies){
+            enemy.update(delta);
+        }
         rayHandler.update();
         rayHandler.setAmbientLight(.000002f);
         player.inputUpdate(delta);
@@ -243,6 +264,12 @@ public class GameScreen extends ScreenAdapter {
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
         handleBulletInput();
         bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
+
+        spawnTimer += delta;
+        if (spawnTimer >= SPAWN_INTERVAL) {
+            spawnEnemies(2);
+            spawnTimer = 0f; // Reset timer
+        }
     }
 
     private void handleBulletInput() {
@@ -258,6 +285,17 @@ public class GameScreen extends ScreenAdapter {
 
             Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity, 70f);
             bulletManager.add(myBullet);
+        }
+    }
+
+    private void spawnEnemies(int numberOfEnemies) {
+        Random random = new Random();
+
+        for (int i = 0; i < numberOfEnemies; i++) {
+            float x = random.nextFloat() * Gdx.graphics.getWidth() / SCALE;
+            float y = random.nextFloat() * Gdx.graphics.getHeight() / SCALE;
+            Enemies enemy = new Enemies(50, x, y, 10, 10, enemyTextureRegion, player);
+            enemies.add(enemy);
         }
     }
 

@@ -31,6 +31,8 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.mygdx.game.utils.Constants.PPM;
 
@@ -67,6 +69,8 @@ public class GameScreen extends ScreenAdapter {
     // asher pax
 
     // game objects
+
+    private List<Enemies> enemies = new ArrayList<>();
     private Enemies enemy;
     private TextureRegion enemyTextureRegion;
     private TextureAtlas textureAtlas;
@@ -120,7 +124,7 @@ public class GameScreen extends ScreenAdapter {
         enemyTextureRegion = textureAtlas.findRegion("walk_down");
 
         // game objects // enemies
-        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion);
+        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion, player);
     }
 
     private TextButton createButton(String text) {
@@ -167,7 +171,11 @@ public class GameScreen extends ScreenAdapter {
 
             // Draw map and player
             mapManager.renderMap(camera); // Render the map
-            enemy.draw(batch); // Draw the player
+            enemy.draw(batch); // draw enemy
+
+//            Iterator<Enemies> enemiesIterator = enemies.iterator();
+
+            // Draw the player
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
             // End batch rendering
             batch.end();
@@ -225,7 +233,7 @@ public class GameScreen extends ScreenAdapter {
 
         Vector2 playerPosition = player.getPosition();
         suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
-
+        enemy.update();
         rayHandler.update();
         rayHandler.setAmbientLight(.000002f);
         player.inputUpdate(delta);

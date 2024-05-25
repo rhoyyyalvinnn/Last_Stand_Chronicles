@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.MyGdxGame;
 import jdbc.MySQLConnection;
-import jdk.javadoc.internal.doclets.formats.html.markup.Text;
+//import jdk.javadoc.internal.doclets.formats.html.markup.Text;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

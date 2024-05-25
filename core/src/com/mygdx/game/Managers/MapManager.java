@@ -25,7 +25,8 @@ public class MapManager {
 
     public MapManager(World world){
 
-       map = new TmxMapLoader().load("assets/map_textures/dungeonmap.tmx");
+       //map = new TmxMapLoader().load("assets/map_textures/dungeonmap.tmx");
+        map = new TmxMapLoader().load("assets/map_textures/forExperiment.tmx");
         tmr = new OrthogonalTiledMapRenderer(map);
 
 
@@ -33,9 +34,10 @@ public class MapManager {
        //TiledObjectUtil.parseTiledObjectLayer(world, map.getLayers().get("boundaries").getObjects());
 
         test_map_textures = new Texture[]{
-                new Texture("assets/map_textures/terrain.png"),
-                new Texture("assets/map_textures/wall.png"),
-                new Texture("assets/map_textures/design.png"),
+                new Texture("assets/map_textures/terrainwithwater.png"),
+                new Texture("assets/map_textures/obsbehindwall.png"),
+                new Texture("assets/map_textures/wallfinal.png"),
+                new Texture("assets/map_textures/obs.png"),
         };
 
 

@@ -39,6 +39,9 @@ public class PlayerManager implements Runnable{
     public static final int WORLD_HEIGHT = 100;
     public float x,y,w,h;
 
+    // pax codes
+    private int health = 10; // for player health
+
     @Override
     public void run(){
         currentState = State.STANDING;
@@ -166,6 +169,15 @@ public class PlayerManager implements Runnable{
 
     public SpriteBatch getBatch(){
         return playerBatch;
+    }
+    public int getHealth() {
+        return health;
+    }
+
+    public void decrementHealth() {
+        if (health > 0) {
+            health--;
+        }
     }
 
 

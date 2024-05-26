@@ -209,7 +209,7 @@ public class GameScreen extends ScreenAdapter {
 
             rayHandler.render();
 
-            hud.update(delta, 100, (int)elapsedTime); // Update health based on player's current health
+            hud.update(delta, player.getHealth(), (int)elapsedTime); // Update health based on player's current health
             hud.draw();
 
         }
@@ -250,12 +250,13 @@ public class GameScreen extends ScreenAdapter {
 
     private void update(float delta) {
         world.step(1 / 60f, 6, 2);
-
-        Vector2 playerPosition = player.getPosition();
-        suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
         for(Enemies enemy: enemies){
             enemy.update(delta);
         }
+        Vector2 playerPosition = player.getPosition();
+        suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
+
+        handlePlayerEnemyCollisions();
         rayHandler.update();
         rayHandler.setAmbientLight(.02f);
         player.inputUpdate(delta);
@@ -275,6 +276,10 @@ public class GameScreen extends ScreenAdapter {
 
         handleCollisions();
         timer += delta;
+
+        if (player.getHealth() <= 0) {
+            context.setScreen(new GameOverScreen(context));
+        }
     }
 
     private void handleBulletInput() {
@@ -335,6 +340,22 @@ public class GameScreen extends ScreenAdapter {
 
         // Remove inactive bullets
         bulletManager.removeIf(bullet -> !bullet.isActive());
+    }
+
+    private void handlePlayerEnemyCollisions() {
+        Rectangle playerBounds = new Rectangle(player.getPosition().x * PPM - 16, player.getPosition().y * PPM - 16, 32, 32);
+        Iterator<Enemies> enemyIterator = enemies.iterator();
+
+        while (enemyIterator.hasNext()) {
+            Enemies enemy = enemyIterator.next();
+            Rectangle enemyBounds = enemy.getBoundingBox();
+
+            if (playerBounds.overlaps(enemyBounds)) {
+                player.decrementHealth(); // Decrement player's health
+                enemyIterator.remove(); // Remove enemy
+                break; // Only handle one collision per frame for simplicity
+            }
+        }
     }
 
 }

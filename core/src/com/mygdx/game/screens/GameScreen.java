@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -79,7 +80,7 @@ public class GameScreen extends ScreenAdapter {
 
     // para sa spawn mga bossing --pax
     private float spawnTimer = 0f;
-    private final float SPAWN_INTERVAL = 1.5f;
+    private final float SPAWN_INTERVAL = 0.3f;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
@@ -131,7 +132,7 @@ public class GameScreen extends ScreenAdapter {
 
         // game objects // enemies
 //        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion, player);
-        spawnEnemies(5);
+//        spawnEnemies(10);
 
 //        for (int i = 0; i < 5; i++) {
 //            float enemyX = MathUtils.random(0, Gdx.graphics.getWidth());
@@ -171,6 +172,49 @@ public class GameScreen extends ScreenAdapter {
         } else {
             update(delta);
 
+            Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            elapsedTime += delta;
+            Animation<TextureRegion> currentAnimation = player.determineCurrentAnimation();
+            TextureRegion currentFrame = currentAnimation.getKeyFrame(elapsedTime, true);
+
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+
+            mapManager.renderMap(camera);
+
+            batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
+
+            for (Enemies enemy : enemies) {
+                enemy.update(delta);
+                enemy.draw(batch);
+            }
+
+            for (Bullet bullet : bulletManager) {
+                if (bullet.isActive()) {
+                    bullet.Update(delta);
+                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
+                }
+            }
+
+            batch.end();
+            hud.draw();
+            rayHandler.render();
+        }
+       /* if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escapePressed) {
+            isPaused = !isPaused;
+            escapePressed = true;
+        } else if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            escapePressed = false;
+        }
+
+        if (isPaused) {
+            stage.act(delta);
+            stage.draw();
+        } else {
+            update(delta);
+
             // Clear the screen
             Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -185,17 +229,18 @@ public class GameScreen extends ScreenAdapter {
 
             // Draw map and player
             mapManager.renderMap(camera); // Render the map
-            // draw enemy
-            for (Enemies enemy : enemies) {
-                enemy.update(delta);
-                enemy.draw(batch);
-            }
+
 
 //            Iterator<Enemies> enemiesIterator = enemies.iterator();
 
             // Draw the player
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
             // End batch rendering
+            // draw enemy
+            for (Enemies enemy : enemies) {
+                enemy.update(delta);
+                enemy.draw(batch);
+            }
             batch.end();
 
             // Render HUD
@@ -205,14 +250,23 @@ public class GameScreen extends ScreenAdapter {
             // Render bullets
             rayHandler.render();
             batch.begin();
+//            for (Bullet bullet : bulletManager) {
+//                bullet.Update(delta);
+//                if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
+//                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
+//                }
+//            }
+
             for (Bullet bullet : bulletManager) {
-                bullet.Update(delta);
-                if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
-                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
+                if (bullet.isActive()) {
+                    bullet.Update(delta);
+                    if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
+                        batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
+                    }
                 }
             }
             batch.end();
-        }
+        }*/
     }
 
     @Override
@@ -238,7 +292,7 @@ public class GameScreen extends ScreenAdapter {
         bulletTexture.dispose();
         skin.dispose();
         stage.dispose();
-        
+
     }
 
     private void cameraUpdate(float delta) {
@@ -267,9 +321,11 @@ public class GameScreen extends ScreenAdapter {
 
         spawnTimer += delta;
         if (spawnTimer >= SPAWN_INTERVAL) {
-            spawnEnemies(2);
+            spawnEnemies(10);
             spawnTimer = 0f; // Reset timer
         }
+
+        handleCollisions();
     }
 
     private void handleBulletInput() {
@@ -283,7 +339,10 @@ public class GameScreen extends ScreenAdapter {
             Vector2 direction = mouseWorldPosition.cpy().sub(bulletStartPosition).nor();
             Vector2 bulletVelocity = direction.scl(bulletSpeed);
 
-            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity, 70f);
+            float bulletWidth = bulletTexture.getWidth();
+            float bulletHeight = bulletTexture.getHeight();
+
+            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity, 70f, bulletWidth, bulletHeight);
             bulletManager.add(myBullet);
         }
     }
@@ -292,11 +351,41 @@ public class GameScreen extends ScreenAdapter {
         Random random = new Random();
 
         for (int i = 0; i < numberOfEnemies; i++) {
-            float x = random.nextFloat() * Gdx.graphics.getWidth() / SCALE;
-            float y = random.nextFloat() * Gdx.graphics.getHeight() / SCALE;
-            Enemies enemy = new Enemies(50, x, y, 10, 10, enemyTextureRegion, player);
+//            float x = random.nextFloat() * Gdx.graphics.getWidth() / SCALE;
+            float x = random.nextFloat() * Gdx.graphics.getWidth();
+
+            float y = random.nextFloat() * Gdx.graphics.getHeight();
+//            float y = random.nextFloat() * Gdx.graphics.getHeight() / SCALE;
+
+            Enemies enemy = new Enemies(80, x, y, 13, 13, enemyTextureRegion, player);
             enemies.add(enemy);
         }
+    }
+
+    private void handleCollisions() {
+        Iterator<Bullet> bulletIterator = bulletManager.iterator();
+        while (bulletIterator.hasNext()) {
+            Bullet bullet = bulletIterator.next();
+            if (!bullet.isActive()) continue;
+
+            Rectangle bulletBounds = bullet.getBoundingBox();
+
+            Iterator<Enemies> enemyIterator = enemies.iterator();
+            while (enemyIterator.hasNext()) {
+                Enemies enemy = enemyIterator.next();
+                Rectangle enemyBounds = enemy.getBoundingBox();
+
+                if (bulletBounds.overlaps(enemyBounds)) {
+                    // Remove bullet and enemy upon collision
+                    bullet.deactivate();
+                    enemyIterator.remove();
+                    break; // Exit the inner loop
+                }
+            }
+        }
+
+        // Remove inactive bullets
+        bulletManager.removeIf(bullet -> !bullet.isActive());
     }
 
 }

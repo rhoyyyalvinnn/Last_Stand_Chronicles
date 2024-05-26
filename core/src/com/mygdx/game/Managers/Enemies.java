@@ -1,7 +1,9 @@
 package com.mygdx.game.Managers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Enemies {
@@ -55,6 +57,7 @@ public class Enemies {
         // Update the enemy's position based on the movement vector
         xPosition += movement.x;
         yPosition += movement.y;
+
 
 
         // test 4
@@ -153,7 +156,9 @@ public class Enemies {
         this.player = player;
     }
 
-
+    public Rectangle getBoundingBox() {
+        return new Rectangle(xPosition, yPosition, width, height);
+    }
 
 
 }

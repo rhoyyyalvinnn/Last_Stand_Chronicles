@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -25,14 +26,17 @@ public class Bullet {
     private float maxDistance;
     private float traveledDistance = 0f;
     private boolean active = true;
-
-    public Bullet( Vector2 startLocation, Vector2 targetLocation, Vector2 velocity,float maxDistance) {
+    private float width;
+    private float height;
+    public Bullet( Vector2 startLocation, Vector2 targetLocation, Vector2 velocity,float maxDistance,float width, float height) {
 
         this.bulletLocation = new Vector2(startLocation);
         this.bulletTargetLocation=new Vector2(targetLocation);
         this.bulletVelocity = velocity.nor().scl(10); // Adjust speed as needed
         this.maxDistance = maxDistance;
 
+        this.width = width / PPM;
+        this.height = height / PPM;
 
         // Create Bullet Fixture
        // TextureAtlas bulletAtlas = new TextureAtlas(Gdx.files.internal("bullet.atlas"));
@@ -60,5 +64,17 @@ public class Bullet {
     public Body getBody() {
         return body;
     }
+
+    public void deactivate() {
+        active = false;
+    }
     //uncommit
+
+    public Rectangle getBoundingBox() {
+        return new Rectangle(bulletLocation.x, bulletLocation.y, width, height);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 }

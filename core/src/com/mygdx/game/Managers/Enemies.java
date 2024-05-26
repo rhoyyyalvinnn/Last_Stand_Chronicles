@@ -157,6 +157,7 @@ public class Enemies {
     }
 
     public Rectangle getBoundingBox() {
+
         return new Rectangle(xPosition, yPosition, width, height);
     }
 

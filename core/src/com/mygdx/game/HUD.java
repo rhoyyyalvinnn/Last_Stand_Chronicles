@@ -1,43 +1,46 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class HUD {
     private Stage stage;
-    private Skin skin;
-    private ProgressBar healthBar;
+    private Array<Image> hearts;
+    private Texture heartTexture;
     private int maxHealth;
 
     public HUD(int maxHealth) {
         this.maxHealth = maxHealth;
         stage = new Stage(new ScreenViewport());
-        skin = new Skin(Gdx.files.internal("sample.json"));
+        hearts = new Array<>();
+        heartTexture = new Texture(Gdx.files.internal("heart.png")); // Load the heart texture
 
-        // Initialize the health bar
-        ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle();
-        progressBarStyle.background = skin.newDrawable("white", 0.3f, 0.3f, 0.3f, 1f);
-        progressBarStyle.knobBefore = skin.newDrawable("white", 0.8f, 0f, 0f, 1f);
+        for (int i = 0; i < 10; i++) { // Assuming maxHealth is 10
+            Image heart = new Image(heartTexture);
+            heart.setSize(40, 40);
+            heart.setPosition(20 + i * 45, Gdx.graphics.getHeight() - 50);
+            hearts.add(heart);
+            stage.addActor(heart);
+        }
 
-        healthBar = new ProgressBar(0, maxHealth, 1, false, progressBarStyle);
-        healthBar.setValue(maxHealth);
-        healthBar.setWidth(200);
-        healthBar.setHeight(40);
-        healthBar.setPosition(20, Gdx.graphics.getHeight() - 40);
-
-
-        stage.addActor(healthBar);
         Gdx.input.setInputProcessor(stage);
     }
 
     public void update(float delta, int currentHealth) {
         stage.act(delta);
-        healthBar.setValue(currentHealth);
+
+        // Update hearts visibility based on current health
+        for (int i = 0; i < hearts.size; i++) {
+            if (i < currentHealth) {
+                hearts.get(i).setVisible(true);
+            } else {
+                hearts.get(i).setVisible(false);
+            }
+        }
     }
 
     public void draw() {
@@ -50,7 +53,7 @@ public class HUD {
 
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        heartTexture.dispose();
     }
 
     public Stage getStage() {

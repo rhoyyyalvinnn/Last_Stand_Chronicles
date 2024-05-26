@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -21,14 +22,15 @@ public class MapManager {
     private MyGdxGame context;
     private TiledMap map;
     private OrthogonalTiledMapRenderer tmr;
-    private RayHandler rayHandler;
+
     private Texture[] test_map_textures;
+    private MapObjects collision;
 
     public MapManager(MapFactory mapFactory, World world) {
         Map createdMap = mapFactory.createMap();
         this.map = createdMap.getTiledMap();
         this.test_map_textures= createdMap.getTextures();
-
+        this.collision= createdMap.getCollison();
         if (this.map == null) {
             System.out.println("MapManager: Error - TiledMap is null.");
         } else {
@@ -40,8 +42,8 @@ public class MapManager {
             System.out.println("MapManager: TiledMap loaded successfully.");
         }
         this.tmr = new OrthogonalTiledMapRenderer(map);
-        this.rayHandler = new RayHandler(world);
-        TiledObjectUtil.parseTiledObjectLayer(world,createdMap.getTiledMap().getLayers().get("collision_layer").getObjects());
+
+        TiledObjectUtil.parseTiledObjectLayer(world,collision);
      //   this.rayHandler.setAmbientLight(0.002f);
         // Initialize other necessary components here
     }
@@ -68,6 +70,6 @@ public class MapManager {
     public void dispose() {
         tmr.dispose();
         map.dispose();
-        rayHandler.dispose();
+
     }
 }

@@ -30,8 +30,8 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 		camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
 		screenCache = new EnumMap<ScreenType, Screen>(ScreenType.class);
 		splashScreen = new SplashScreen(this);
-		setScreen(splashScreen);
-		splashScreen.setListener(this);
+		setScreen(ScreenType.GAME);
+		//splashScreen.setListener(this);
 	}
 
 	@Override

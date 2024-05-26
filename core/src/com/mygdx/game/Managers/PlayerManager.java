@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -36,7 +37,7 @@ public class PlayerManager implements Runnable{
     private SpriteBatch playerBatch;
     public static final int WORLD_WIDTH = 100;
     public static final int WORLD_HEIGHT = 100;
-
+    public float x,y,w,h;
 
     @Override
     public void run(){
@@ -84,17 +85,15 @@ public class PlayerManager implements Runnable{
         if (isStatic) {
             def.type = BodyDef.BodyType.DynamicBody;
 
-        } else {
-            def.type = BodyDef.BodyType.StaticBody;
         }
 
         // def.type = BodyDef.BodyType.DynamicBody;
-        def.position.set(x / PPM, y / PPM);
+      //  def.position.set(x / PPM, y / PPM);
         def.fixedRotation = true;
         pBody = world.createBody(def);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width/ 2f / PPM, height / 2f / PPM);
+       shape.setAsBox(width/ 2f / PPM, height / 2f / PPM);
 
         pBody.createFixture(shape, 1.0f);
         shape.dispose();
@@ -168,4 +167,6 @@ public class PlayerManager implements Runnable{
     public SpriteBatch getBatch(){
         return playerBatch;
     }
+
+
 }

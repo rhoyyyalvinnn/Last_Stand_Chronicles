@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HUD;
 import com.mygdx.game.Managers.*;
 import com.mygdx.game.Map.MapOneFactory;
+import com.mygdx.game.Map.MapTwoFactory;
 import com.mygdx.game.MyGdxGame;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -100,11 +101,12 @@ public class GameScreen extends ScreenAdapter {
         player.run();
         batch = player.getBatch();
         MapOneFactory first = new MapOneFactory();
-
-        mapManager = new MapManager(first, world);
+        MapTwoFactory second = new MapTwoFactory();
+        mapManager = new MapManager(second, world);
 
         // Light setup
         rayHandler = new RayHandler(world);
+
         suga = new PointLight(rayHandler, 50, Color.GRAY, 5, player.getPosition().x, player.getPosition().y);
         suga.attachToBody(PlayerManager.player);
 
@@ -200,73 +202,14 @@ public class GameScreen extends ScreenAdapter {
 
             batch.end();
             hud.draw();
+
+
+
             rayHandler.render();
-        }
-       /* if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escapePressed) {
-            isPaused = !isPaused;
-            escapePressed = true;
-        } else if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            escapePressed = false;
-        }
-
-        if (isPaused) {
-            stage.act(delta);
-            stage.draw();
-        } else {
-            update(delta);
-
-            // Clear the screen
-            Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            elapsedTime += delta;
-            Animation<TextureRegion> currentAnimation = player.determineCurrentAnimation();
-            TextureRegion currentFrame = currentAnimation.getKeyFrame(elapsedTime, true);
-
-            // Begin batch rendering
-            batch.setProjectionMatrix(camera.combined);
-            batch.begin();
-
-            // Draw map and player
-            mapManager.renderMap(camera); // Render the map
-
-
-//            Iterator<Enemies> enemiesIterator = enemies.iterator();
-
-            // Draw the player
-            batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
-            // End batch rendering
-            // draw enemy
-            for (Enemies enemy : enemies) {
-                enemy.update(delta);
-                enemy.draw(batch);
-            }
-            batch.end();
-
-            // Render HUD
-         //  hud.update(delta, player.getHealth());
+            hud.update(delta, 100); // Update health based on player's current health
             hud.draw();
+        }
 
-            // Render bullets
-            rayHandler.render();
-            batch.begin();
-//            for (Bullet bullet : bulletManager) {
-//                bullet.Update(delta);
-//                if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
-//                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
-//                }
-//            }
-
-            for (Bullet bullet : bulletManager) {
-                if (bullet.isActive()) {
-                    bullet.Update(delta);
-                    if (bullet.bulletLocation.x > -50 && bullet.bulletLocation.x < Gdx.graphics.getWidth() + 50 && bullet.bulletLocation.y > -50 && bullet.bulletLocation.y < Gdx.graphics.getHeight() + 50) {
-                        batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
-                    }
-                }
-            }
-            batch.end();
-        }*/
     }
 
     @Override
@@ -310,8 +253,9 @@ public class GameScreen extends ScreenAdapter {
             enemy.update(delta);
         }
         rayHandler.update();
-        rayHandler.setAmbientLight(.000002f);
+        rayHandler.setAmbientLight(.02f);
         player.inputUpdate(delta);
+        player.getBoundingBox();
         cameraUpdate(delta);
         mapManager.renderMap(camera);
         batch.setProjectionMatrix(camera.combined);
@@ -373,8 +317,8 @@ public class GameScreen extends ScreenAdapter {
             Iterator<Enemies> enemyIterator = enemies.iterator();
             while (enemyIterator.hasNext()) {
                 Enemies enemy = enemyIterator.next();
-                Rectangle enemyBounds = enemy.getBoundingBox();
-
+                //Rectangle enemyBounds = enemy.getBoundingBox();
+                Rectangle enemyBounds=enemy.getBoundingBox();
                 if (bulletBounds.overlaps(enemyBounds)) {
                     // Remove bullet and enemy upon collision
                     bullet.deactivate();

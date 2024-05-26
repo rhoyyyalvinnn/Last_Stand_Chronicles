@@ -78,6 +78,7 @@ public class GameScreen extends ScreenAdapter {
     private Enemies enemy;
     private TextureRegion enemyTextureRegion;
     private TextureAtlas textureAtlas;
+    private float timer;
 
     // para sa spawn mga bossing --pax
     private float spawnTimer = 0f;
@@ -95,6 +96,7 @@ public class GameScreen extends ScreenAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE, Gdx.graphics.getHeight() / SCALE);
 
+
         world = new World(new Vector2(0, 0), false);
         b2dr = new Box2DDebugRenderer();
         player = new PlayerManager(world);
@@ -111,7 +113,7 @@ public class GameScreen extends ScreenAdapter {
         suga.attachToBody(PlayerManager.player);
 
         // Initialize HUD
-        hud = new HUD(100); // Max health is 100
+        hud = new HUD(100, skin); // Max health is 100
 
         Table root = new Table();
         root.setFillParent(true);
@@ -201,13 +203,15 @@ public class GameScreen extends ScreenAdapter {
             }
 
             batch.end();
-            hud.draw();
+
 
 
 
             rayHandler.render();
-            hud.update(delta, 100); // Update health based on player's current health
+
+            hud.update(delta, 100, (int)elapsedTime); // Update health based on player's current health
             hud.draw();
+
         }
 
     }
@@ -255,7 +259,7 @@ public class GameScreen extends ScreenAdapter {
         rayHandler.update();
         rayHandler.setAmbientLight(.02f);
         player.inputUpdate(delta);
-        player.getBoundingBox();
+//        player.getBoundingBox();
         cameraUpdate(delta);
         mapManager.renderMap(camera);
         batch.setProjectionMatrix(camera.combined);
@@ -270,6 +274,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         handleCollisions();
+        timer += delta;
     }
 
     private void handleBulletInput() {
@@ -301,7 +306,7 @@ public class GameScreen extends ScreenAdapter {
             float y = random.nextFloat() * Gdx.graphics.getHeight();
 //            float y = random.nextFloat() * Gdx.graphics.getHeight() / SCALE;
 
-            Enemies enemy = new Enemies(80, x, y, 13, 13, enemyTextureRegion, player);
+            Enemies enemy = new Enemies(10, x, y, 13, 13, enemyTextureRegion, player);
             enemies.add(enemy);
         }
     }

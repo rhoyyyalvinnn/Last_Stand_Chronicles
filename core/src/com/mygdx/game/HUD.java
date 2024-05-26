@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -13,7 +15,12 @@ public class HUD {
     private Texture heartTexture;
     private int maxHealth;
 
-    public HUD(int maxHealth) {
+    //Asher pax codes
+    private Label scoreLabel;
+    private int score;
+
+
+    public HUD(int maxHealth, Skin skin) {
         this.maxHealth = maxHealth;
         stage = new Stage(new ScreenViewport());
         hearts = new Array<>();
@@ -27,10 +34,22 @@ public class HUD {
             stage.addActor(heart);
         }
 
+        scoreLabel = new Label("Score: 0", skin);
+//        scoreLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 50);
+//        scoreLabel.setPosition((Gdx.graphics.getWidth() - scoreLabel.getWidth()) / 2 + 50, Gdx.graphics.getHeight() - 200);
+        scoreLabel.setPosition(30,30);
+
+        scoreLabel.setWidth(200);
+        scoreLabel.setHeight(80);
+        scoreLabel.setFontScale(0.5f);
+        stage.addActor(scoreLabel);
+
+        System.out.println(score);
+
         Gdx.input.setInputProcessor(stage);
     }
 
-    public void update(float delta, int currentHealth) {
+    public void update(float delta, int currentHealth, int score) {
         stage.act(delta);
 
         // Update hearts visibility based on current health
@@ -41,6 +60,10 @@ public class HUD {
                 hearts.get(i).setVisible(false);
             }
         }
+
+        this.score = score;
+        scoreLabel.setText("Score: " + score);
+        System.out.println(score);
     }
 
     public void draw() {

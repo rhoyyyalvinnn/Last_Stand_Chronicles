@@ -26,18 +26,24 @@ public class MapManager {
     public MapManager(World world){
 
        //map = new TmxMapLoader().load("assets/map_textures/dungeonmap.tmx");
-        map = new TmxMapLoader().load("assets/map_textures/forExperiment.tmx");
+        map = new TmxMapLoader().load("assets/map_textures/map2/map_2_notdoneyet.tmx");
         tmr = new OrthogonalTiledMapRenderer(map);
 
 
-        TiledObjectUtil.parseTiledObjectLayer(world, map.getLayers().get("collision_layer").getObjects());
+        TiledObjectUtil.parseTiledObjectLayer(world, map.getLayers().get("rectangleObs").getObjects());
        //TiledObjectUtil.parseTiledObjectLayer(world, map.getLayers().get("boundaries").getObjects());
 
+//        test_map_textures = new Texture[]{
+//                new Texture("assets/map_textures/map1/terrainwithwater.png"),
+//                new Texture("assets/map_textures/map1/obsbehindwall.png"),
+//                new Texture("assets/map_textures/map1/wallfinal.png"),
+//                new Texture("assets/map_textures/map1/obs.png"),
+//        };
         test_map_textures = new Texture[]{
-                new Texture("assets/map_textures/terrainwithwater.png"),
-                new Texture("assets/map_textures/obsbehindwall.png"),
-                new Texture("assets/map_textures/wallfinal.png"),
-                new Texture("assets/map_textures/obs.png"),
+                new Texture("assets/map_textures/map2/ground2.png"),
+                new Texture("assets/map_textures/map2/obsafterwall.png"),
+                new Texture("assets/map_textures/map2/wall2.png"),
+                new Texture("assets/map_textures/map2/obs22.png"),
         };
 
 

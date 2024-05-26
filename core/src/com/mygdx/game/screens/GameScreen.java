@@ -166,8 +166,6 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (isPaused) {
-
-
             stage.act(delta);
             stage.draw();
         } else {
@@ -187,8 +185,8 @@ public class GameScreen extends ScreenAdapter {
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
             batch.end();
 
-            // Render health bar
-//            hud.update(delta, player.getHealth()); // Update health based on player's current health
+            // Render health bar as hearts
+            hud.update(delta, 100); // Update health based on player's current health
             hud.draw();
 
             // Bullet render

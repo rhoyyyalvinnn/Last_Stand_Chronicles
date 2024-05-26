@@ -270,7 +270,7 @@ public class GameScreen extends ScreenAdapter {
 
         spawnTimer += delta;
         if (spawnTimer >= SPAWN_INTERVAL) {
-            spawnEnemies(10);
+            spawnEnemies(3);
             spawnTimer = 0f; // Reset timer
         }
 

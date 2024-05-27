@@ -13,7 +13,7 @@ public class DesktopLauncher {
 		//config.setWindowedMode(1980,1080);
 		config.setTitle("Last Stand Chronicles");
 		config.setWindowIcon("resources/logo_2.png");
-		//config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+	//	config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		new Lwjgl3Application((ApplicationListener) new MyGdxGame(), config);
 	}
 }

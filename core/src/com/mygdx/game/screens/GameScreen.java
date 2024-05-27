@@ -83,9 +83,11 @@ public class GameScreen extends ScreenAdapter {
     // para sa spawn mga bossing --pax
     private float spawnTimer = 0f;
     private final float SPAWN_INTERVAL = 0.3f;
-
+   private LevelScreen lvl;
     public GameScreen(MyGdxGame context) {
+
         this.context = context;
+        this.lvl = new LevelScreen(context);
     }
 
     @Override
@@ -102,9 +104,24 @@ public class GameScreen extends ScreenAdapter {
         player = new PlayerManager(world);
         player.run();
         batch = player.getBatch();
-        MapOneFactory first = new MapOneFactory();
-        MapTwoFactory second = new MapTwoFactory();
-        mapManager = new MapManager(second, world);
+
+        lvl.show();
+
+//        lvl.setMapValue("");
+        System.out.println(lvl.getMapValue());
+        if(lvl.mapValue == "First"){
+            Gdx.app.debug("gamescreren", lvl.getMapValue());
+            MapOneFactory first = new MapOneFactory();
+            mapManager = new MapManager(first, world);
+        }else{
+            System.out.println(lvl.getMapValue());
+            MapTwoFactory second = new MapTwoFactory();
+            mapManager = new MapManager(second, world);
+        }
+
+
+
+
 
         // Light setup
         rayHandler = new RayHandler(world);
@@ -258,7 +275,7 @@ public class GameScreen extends ScreenAdapter {
 
         handlePlayerEnemyCollisions();
         rayHandler.update();
-        rayHandler.setAmbientLight(.02f);
+        rayHandler.setAmbientLight(.2f);
         player.inputUpdate(delta);
 //        player.getBoundingBox();
         cameraUpdate(delta);

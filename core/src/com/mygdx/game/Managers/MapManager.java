@@ -48,15 +48,7 @@ public class MapManager {
         // Initialize other necessary components here
     }
 
-    public void drawLayerTextures(SpriteBatch batch, TextureRegion textregion) {
-        for (int i = 0; i < test_map_textures.length; i++) {
-            Texture texturez = test_map_textures[i];
-            if (i == 4) {
-                batch.draw(textregion, player.getPosition().x * PPM - ((float) textregion.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) textregion.getRegionHeight() / 8));
-            }
-            batch.draw(texturez, 0, 0);
-        }
-    }
+
 
     public void renderMap(OrthographicCamera camera) {
         if (tmr != null && map != null) { // Check if tmr and map are not null

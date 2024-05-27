@@ -1,7 +1,5 @@
 Things to fix
-    [] Bullet Contact
     [] Enemies
-    [] HUD health
-    [] pauseUI
-    [] jdbc
-    []
+    [x] HUD health
+    [x] pauseUI
+    [x]jdbc

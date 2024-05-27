@@ -28,9 +28,6 @@ public class MapOne extends Map{
             e.printStackTrace();
         }
     }
-
-
-
     @Override
     public void dispose() {
         renderer.dispose();

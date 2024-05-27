@@ -43,37 +43,24 @@ import static com.mygdx.game.utils.Constants.PPM;
 public class GameScreen extends ScreenAdapter {
     private final MyGdxGame context;
     private final float SCALE = 2.5f;
-
     private float elapsedTime = 0f;
     private Box2DDebugRenderer b2dr;
-
     private OrthographicCamera camera;
-
     private World world;
     private PlayerManager player;
-
     private SpriteBatch batch;
-
     private MapManager mapManager;
     private RayHandler rayHandler;
     private PointLight suga;
-
     private Texture bulletTexture;
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
     private HUD hud;
-
     private boolean isPaused = false;
-
     private boolean escapePressed = false;
     private Skin skin;
     private Stage stage;
     private Label paused;
-
-    // asher pax
-
-    // game objects
-
     private List<Enemies> enemies = new ArrayList<>();
     private Enemies enemy;
     private TextureRegion enemyTextureRegion;
@@ -83,13 +70,10 @@ public class GameScreen extends ScreenAdapter {
     // para sa spawn mga bossing --pax
     private float spawnTimer = 0f;
     private final float SPAWN_INTERVAL = 0.3f;
-   private LevelScreen lvl;
+
     public GameScreen(MyGdxGame context) {
-
         this.context = context;
-        this.lvl = new LevelScreen(context);
     }
-
     @Override
     public void show() {
         bulletTexture = new Texture("tile000.png");
@@ -104,64 +88,39 @@ public class GameScreen extends ScreenAdapter {
         player = new PlayerManager(world);
         player.run();
         batch = player.getBatch();
+        MapOneFactory first = new MapOneFactory();
+        MapTwoFactory second = new MapTwoFactory();
 
-        lvl.show();
 
-//        lvl.setMapValue("");
-        System.out.println(lvl.getMapValue());
-        if(lvl.mapValue == "First"){
-            Gdx.app.debug("gamescreren", lvl.getMapValue());
-            MapOneFactory first = new MapOneFactory();
+        if(LevelScreen.mapValue == "First"){
             mapManager = new MapManager(first, world);
-        }else{
-            System.out.println(lvl.getMapValue());
-            MapTwoFactory second = new MapTwoFactory();
+        }else if(LevelScreen.mapValue=="Second"){
             mapManager = new MapManager(second, world);
         }
 
-
-
-
-
         // Light setup
         rayHandler = new RayHandler(world);
-
         suga = new PointLight(rayHandler, 50, Color.GRAY, 5, player.getPosition().x, player.getPosition().y);
         suga.attachToBody(PlayerManager.player);
-
         // Initialize HUD
         hud = new HUD(100, skin); // Max health is 100
+
 
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
-
         paused = new Label("Game is paused", skin);
         root.center();
         root.add(paused).width(600).expandX().center().uniform();
-
         root.row();
         root.add(createButton("Resume")).center().width(600).uniformX().pad(3).row();
-
         root.row();
         root.add(createButton("Exit")).center().width(600).uniformX().pad(3).row();
-
         Gdx.input.setInputProcessor(stage);
-
         textureAtlas = new TextureAtlas("enemies/Spirit.atlas");
         enemyTextureRegion = textureAtlas.findRegion("walk_down");
-
-        // game objects // enemies
-//        enemy = new Enemies(2, Gdx.graphics.getHeight() / 2, Gdx.graphics.getWidth() / 4, 10, 10, enemyTextureRegion, player);
-//        spawnEnemies(10);
-
-//        for (int i = 0; i < 5; i++) {
-//            float enemyX = MathUtils.random(0, Gdx.graphics.getWidth());
-//            float enemyY = MathUtils.random(0, Gdx.graphics.getHeight());
-//            spawnEnemies(5);
-//            enemies.add(enemy);
-//        }
     }
+
 
     private TextButton createButton(String text) {
         TextButton button = new TextButton(text, skin);
@@ -192,45 +151,30 @@ public class GameScreen extends ScreenAdapter {
             stage.draw();
         } else {
             update(delta);
-
             Gdx.gl.glClearColor(58 / 255f, 58 / 255f, 80 / 255f, 1f);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
             elapsedTime += delta;
             Animation<TextureRegion> currentAnimation = player.determineCurrentAnimation();
             TextureRegion currentFrame = currentAnimation.getKeyFrame(elapsedTime, true);
-
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
-
             mapManager.renderMap(camera);
-
             batch.draw(currentFrame, player.getPosition().x * PPM - ((float) currentFrame.getRegionWidth() / 2), player.getPosition().y * PPM - ((float) currentFrame.getRegionHeight() / 8));
-
             for (Enemies enemy : enemies) {
                 enemy.update(delta);
                 enemy.draw(batch);
             }
-
             for (Bullet bullet : bulletManager) {
                 if (bullet.isActive()) {
                     bullet.Update(delta);
                     batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
                 }
             }
-
             batch.end();
-
-
-
-
             rayHandler.render();
-
             hud.update(delta, player.getHealth(), (int)elapsedTime); // Update health based on player's current health
             hud.draw();
-
         }
-
     }
 
     @Override
@@ -256,7 +200,6 @@ public class GameScreen extends ScreenAdapter {
         bulletTexture.dispose();
         skin.dispose();
         stage.dispose();
-
     }
 
     private void cameraUpdate(float delta) {
@@ -272,7 +215,6 @@ public class GameScreen extends ScreenAdapter {
         }
         Vector2 playerPosition = player.getPosition();
         suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
-
         handlePlayerEnemyCollisions();
         rayHandler.update();
         rayHandler.setAmbientLight(.2f);
@@ -290,7 +232,6 @@ public class GameScreen extends ScreenAdapter {
             spawnEnemies(3);
             spawnTimer = 0f; // Reset timer
         }
-
         handleCollisions();
         timer += delta;
 

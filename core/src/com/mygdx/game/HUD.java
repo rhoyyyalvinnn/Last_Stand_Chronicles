@@ -82,4 +82,8 @@ public class HUD {
     public Stage getStage() {
         return stage;
     }
+
+    public int getScore(){
+        return score;
+    }
 }

@@ -71,6 +71,9 @@ public class GameScreen extends ScreenAdapter {
     private float spawnTimer = 0f;
     private final float SPAWN_INTERVAL = 0.3f;
 
+    // user id
+    private int userId;
+
     public GameScreen(MyGdxGame context) {
         this.context = context;
     }
@@ -236,7 +239,7 @@ public class GameScreen extends ScreenAdapter {
         timer += delta;
 
         if (player.getHealth() <= 0) {
-            context.setScreen(new GameOverScreen(context));
+            context.setScreen(new GameOverScreen(context, hud.getScore(), userId));
         }
     }
 

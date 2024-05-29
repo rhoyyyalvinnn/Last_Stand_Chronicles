@@ -46,8 +46,6 @@ public class LevelScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
         bgTexture = new Texture(Gdx.files.internal("skinfiles/bg_login.png"));
         imageBg=new Image(bgTexture);
-
-
     }
     @Override
     public void show() {
@@ -70,7 +68,7 @@ public class LevelScreen implements Screen {
         lvl1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                setMapValue("First");
+                //setMapValue("First");
                 mapValue="First";// Set mapValue to "First"
                 context.setScreen(ScreenType.GAME);
             }

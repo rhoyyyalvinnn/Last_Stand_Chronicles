@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -33,11 +34,12 @@ public class MenuScreen implements Screen {
     private Texture background;
     private Music backgroundMusic;
     private final MyGdxGame context;
+    private String mapValue;
 
-
+    private User loggedInUser;
     public MenuScreen(final MyGdxGame context) {
         this.context = context;
-        User loggedInUser = context.getLoggedInUser();
+        loggedInUser = context.getLoggedInUser();
         if(loggedInUser != null){
             System.out.println("Logged in user: " + loggedInUser.getUsername());
         }
@@ -62,7 +64,9 @@ public class MenuScreen implements Screen {
         SoundManager.getBackgroundMusic().play();
 
 
-
+        Label welcome = new Label("Welcome " + loggedInUser.getUsername()+ "!!", skin);
+        welcome.setPosition(1400,700);
+        stage.addActor(welcome);
         stage.addActor(createButton("  New game  ",230,700));
         stage.addActor(createButton("  Load game  ",230,500));
         stage.addActor(createButton("  Settings  ",230,300));
@@ -119,6 +123,7 @@ public class MenuScreen implements Screen {
                     context.setScreen(ScreenType.SETTING);
                 }
                 if(text.equals("  New game  ")){
+                    LevelScreen.mapValue="First";// Set mapValue to "First"
                     context.setScreen(ScreenType.GAME);
                 }else if (text.equals("  Exit  ")) {
                     Gdx.app.exit();

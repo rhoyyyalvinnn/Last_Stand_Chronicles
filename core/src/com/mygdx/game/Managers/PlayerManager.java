@@ -163,6 +163,11 @@ public class PlayerManager implements Runnable{
         return player.getPosition();
     }
 
+    public void setPosition(Vector2 position) {
+        player.setTransform(position, player.getAngle());
+    }
+
+
     private void initializeAnimations(){
 
     }

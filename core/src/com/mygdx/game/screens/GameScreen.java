@@ -90,6 +90,8 @@ public class GameScreen extends ScreenAdapter {
         b2dr = new Box2DDebugRenderer();
         player = new PlayerManager(world);
         player.run();
+        System.out.println("x: " + player.getPosition().x + " y: " + player.getPosition().y);
+        player.setPosition(new Vector2(5,5));
         batch = player.getBatch();
         MapOneFactory first = new MapOneFactory();
         MapTwoFactory second = new MapTwoFactory();

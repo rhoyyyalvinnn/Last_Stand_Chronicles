@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Managers.SoundManager;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.mygdx.game.User;
 import jdbc.MySQLConnection;
 
 import java.sql.Connection;
@@ -36,6 +37,10 @@ public class MenuScreen implements Screen {
 
     public MenuScreen(final MyGdxGame context) {
         this.context = context;
+        User loggedInUser = context.getLoggedInUser();
+        if(loggedInUser != null){
+            System.out.println("Logged in user: " + loggedInUser.getUsername());
+        }
     }
 
     @Override
@@ -106,6 +111,7 @@ public class MenuScreen implements Screen {
     private TextButton createButton(String text,int x, int y) {
         TextButton button = new TextButton(text, skin);
         button.setPosition(x,y);
+        button.setWidth(600);
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

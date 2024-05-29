@@ -14,7 +14,7 @@ import jdbc.MySQLConnection;
 import com.mygdx.game.Managers.SoundManager;
 import java.util.EnumMap;
 
-public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener{
+public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener {
 
 	private SplashScreen splashScreen;
 	private EnumMap<ScreenType, Screen> screenCache;
@@ -22,15 +22,16 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 	public OrthographicCamera camera;
 	public static final int V_WIDTH = 480;
 	public static final int V_HEIGHT = 420;
+	private User loggedInUser;
 
 	@Override
 	public void create() {
 		assetManager = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
-		screenCache = new EnumMap<ScreenType, Screen>(ScreenType.class);
+		screenCache = new EnumMap<>(ScreenType.class);
 		splashScreen = new SplashScreen(this);
-		setScreen(ScreenType.LEVEL);
+		setScreen(splashScreen);
 		splashScreen.setListener(this);
 	}
 
@@ -48,7 +49,6 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 	public void dispose() {
 		super.dispose();
 		splashScreen.dispose();
-		super.dispose();
 		SoundManager.dispose();
 	}
 
@@ -75,5 +75,13 @@ public class MyGdxGame extends Game implements SplashScreen.SplashScreenListener
 		SoundManager.create();
 	}
 
-	// Dispose the background music when the game is disposed
+	// Method to set the logged-in user
+	public void setLoggedInUser(User user) {
+		this.loggedInUser = user;
+	}
+
+	// Method to get the logged-in user
+	public User getLoggedInUser() {
+		return loggedInUser;
+	}
 }

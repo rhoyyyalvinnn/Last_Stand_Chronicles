@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.User;
 import jdbc.MySQLConnection;
 //import jdk.javadoc.internal.doclets.formats.html.markup.Text;
 
@@ -97,14 +98,16 @@ public class LoginScreen implements Screen {
                 String username = usernameField.getText();
                 String password = passwordField.getText();
 
-                // Add logic to handle login
-                if (authenticate(username, password)) {
-                    context.setScreen(new MenuScreen(context)); // Switch to the menu screen on successful login
+                User user = authenticate(username, password);
+                if (user != null) {
+                    context.setLoggedInUser(user); // Store the logged-in user in MyGdxGame
+                    context.setScreen(ScreenType.MENU); // Switch to the menu screen on successful login
                 } else {
                     actionTarget.setText(" Invalid Username or password ");
                 }
             }
         });
+
 
         // Add clickable label for registration
         Label registerLabel = new Label("  No Account? Register here  ", skin, "kapoya", Color.BLUE);
@@ -135,28 +138,25 @@ public class LoginScreen implements Screen {
 
     }
 
-    private boolean authenticate(String username, String password) {
-
-        String name = "";
-        String pass = "";
-        try(Connection connection = MySQLConnection.getConnection();
-            Statement statement = connection.createStatement()){
-            String selectQuery = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
+    private User authenticate(String username, String password) {
+        try (Connection connection = MySQLConnection.getConnection();
+             Statement statement = connection.createStatement()) {
+            String selectQuery = "SELECT id, username FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
             ResultSet result = statement.executeQuery(selectQuery);
 
-            if(result.next()){
-                return true;
+            if (result.next()) {
+                int userId = result.getInt("id");
+                String userUsername = result.getString("username");
+                return new User(userId, userUsername);
             } else {
-                return false;
+                return null;
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-
-        // Implement your authentication logic here
-        // For demonstration, let's assume any non-empty username and password are valid
-        return !username.isEmpty() && !password.isEmpty();
     }
+
 
     @Override
     public void render(float delta) {

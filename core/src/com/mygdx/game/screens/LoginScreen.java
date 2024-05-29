@@ -51,20 +51,29 @@ public class LoginScreen implements Screen {
     public void show() {
 
         //create table if it doesn't exist
-        try(Connection c = MySQLConnection.getConnection();
-            Statement statement = c.createStatement()) {
+        try (Connection c = MySQLConnection.getConnection();
+             Statement statement = c.createStatement()) {
             String createTableQuery = "CREATE TABLE IF NOT EXISTS users (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "fname VARCHAR(20) NOT NULL," +
                     "lname VARCHAR(20) NOT NULL," +
                     "email VARCHAR(100) NOT NULL," +
-                    "username VARCHAR(50) NOT NULL, " +
+                    "username VARCHAR(50) NOT NULL," +
                     "password VARCHAR(50) NOT NULL)";
+            String scoreTable = "CREATE TABLE IF NOT EXISTS high_scores (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "user_id INT(11) NOT NULL," +
+                    "score INT(11) NOT NULL," +
+                    "achieved_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," + // Corrected line
+                    "FOREIGN KEY (user_id) REFERENCES users(id))"; // Added foreign key constraint
+
             statement.execute(createTableQuery);
-            System.out.println("Table Created Successfully");
+            statement.execute(scoreTable);
+            System.out.println("Tables Created Successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         float rectangleWidth = 1650;
         float rectangleHeight = 900;
         imageBg.setPosition(((Gdx.graphics.getWidth() - rectangleWidth) / 2),(Gdx.graphics.getHeight() - rectangleHeight) / 2);

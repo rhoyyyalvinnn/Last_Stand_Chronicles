@@ -22,37 +22,37 @@ public class MySQLConnection {
         return connection;
     }
 
-    public static void insertScore(int userId, int score) {
-        String query = "INSERT INTO high_scores (user_id, score) VALUES (?, ?)";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, score);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static HighScore getHighestScore() {
-        String query = "SELECT u.username, h.score " +
-                "FROM high_scores h " +
-                "JOIN users u ON h.user_id = u.id " +
-                "ORDER BY h.score DESC " +
-                "LIMIT 1";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                String username = resultSet.getString("username");
-                int score = resultSet.getInt("score");
-                return new HighScore(username, score);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    public static void insertScore(int userId, int score) {
+//        String query = "INSERT INTO high_scores (user_id, score) VALUES (?, ?)";
+//        try (Connection connection = getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+//            preparedStatement.setInt(1, userId);
+//            preparedStatement.setInt(2, score);
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public static HighScore getHighestScore() {
+//        String query = "SELECT u.username, h.score " +
+//                "FROM high_scores h " +
+//                "JOIN users u ON h.user_id = u.id " +
+//                "ORDER BY h.score DESC " +
+//                "LIMIT 1";
+//        try (Connection connection = getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(query);
+//             ResultSet resultSet = preparedStatement.executeQuery()) {
+//            if (resultSet.next()) {
+//                String username = resultSet.getString("username");
+//                int score = resultSet.getInt("score");
+//                return new HighScore(username, score);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     public static void main(String[] args) {
         getConnection();

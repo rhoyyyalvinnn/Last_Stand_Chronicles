@@ -31,7 +31,8 @@ public class SettingScreen implements Screen {
     public void show() {
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("sample.json"));
-        backgroundTexture = new Texture(Gdx.files.internal("menubg.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("loading/nindot.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("loading/nindot.png"));
 
         backgroundMusic = SoundManager.getBackgroundMusic();
 

@@ -21,7 +21,7 @@ public class Enemies {
 
     // enemy movement
 
-    private static final float MOVEMENT_SPEED = 2.0f;
+    private static final float MOVEMENT_SPEED = 2.5f;
 
     public Enemies(float movementSpeed,
                    float xCentre,
@@ -41,6 +41,9 @@ public class Enemies {
 
     public void draw(Batch batch){
         batch.draw(enemyTexture, xPosition, yPosition, width, height);
+    }
+    public void dispose(Batch batch) {
+        batch.dispose();
     }
 
     public void update(float delta){

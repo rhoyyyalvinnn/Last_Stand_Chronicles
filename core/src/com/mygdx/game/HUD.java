@@ -43,9 +43,7 @@ public class HUD {
         scoreLabel.setHeight(80);
         scoreLabel.setFontScale(0.5f);
         stage.addActor(scoreLabel);
-
         System.out.println(score);
-
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -85,5 +83,11 @@ public class HUD {
 
     public int getScore(){
         return score;
+    }
+    public void resetScore() {
+        score = 0;
+    }
+    public void setScore(int score){
+        this.score = score;
     }
 }

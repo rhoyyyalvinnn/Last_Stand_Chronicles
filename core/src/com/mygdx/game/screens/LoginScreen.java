@@ -60,7 +60,7 @@ public class LoginScreen implements Screen {
                     "email VARCHAR(100) NOT NULL," +
                     "username VARCHAR(50) NOT NULL," +
                     "password VARCHAR(50) NOT NULL)";
-            String scoreTable = "CREATE TABLE IF NOT EXISTS high_scores (" +
+            String scoreTable = "CREATE TABLE IF NOT EXISTS score_history (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "user_id INT(11) NOT NULL," +
                     "score INT(11) NOT NULL," +

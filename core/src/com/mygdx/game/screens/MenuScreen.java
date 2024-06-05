@@ -11,10 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
@@ -65,8 +62,9 @@ public class MenuScreen implements Screen {
 
 
         Label welcome = new Label("Welcome " + loggedInUser.getUsername()+ "!!", skin);
-        welcome.setPosition(1400,700);
+        welcome.setPosition(1300,700);
         stage.addActor(welcome);
+        stage.addActor(createButton("  History  ", 1300, 500));
         stage.addActor(createButton("  New game  ",230,700));
         stage.addActor(createButton("  Load game  ",230,500));
         stage.addActor(createButton("  Settings  ",230,300));
@@ -74,9 +72,6 @@ public class MenuScreen implements Screen {
 
 
         Gdx.input.setInputProcessor(stage);
-
-
-
     }
 
     @Override
@@ -121,12 +116,15 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (text.equals("  Settings  ")) {
                     context.setScreen(ScreenType.SETTING);
-                }
-                if(text.equals("  New game  ")){
+                }else if(text.equals("  New game  ")){
                     LevelScreen.mapValue="First";// Set mapValue to "First"
                     context.setScreen(ScreenType.GAME);
+                }else if(text.equals("  Load game  ")){
+                    context.setScreen(ScreenType.LEVEL);
                 }else if (text.equals("  Exit  ")) {
                     Gdx.app.exit();
+                }else if(text.equalsIgnoreCase("  History  ")){
+                    context.setScreen(ScreenType.HISTORY);
                 }
 
             }

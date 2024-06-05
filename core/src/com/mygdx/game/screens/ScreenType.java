@@ -9,7 +9,8 @@ public enum ScreenType {
     MENU(MenuScreen.class),
     SPLASH2(SplashTWO.class),
     LEVEL(LevelScreen.class),
-    LOGIN(LoginScreen.class);  // Add the LOGIN screen type here
+    LOGIN(LoginScreen.class),
+    HISTORY(HistoryScreen.class);// Add the LOGIN screen type here
 
     private final Class<? extends Screen> screenClass;
 

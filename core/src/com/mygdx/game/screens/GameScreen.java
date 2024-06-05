@@ -32,6 +32,7 @@ import com.mygdx.game.Map.MapTwoFactory;
 import com.mygdx.game.MyGdxGame;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.mygdx.game.User;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,7 +56,7 @@ public class GameScreen extends ScreenAdapter {
     private Texture bulletTexture;
     private ArrayList<Bullet> bulletManager = new ArrayList<>();
     private final float bulletSpeed = 500;
-    private HUD hud;
+    public static HUD hud;
     private boolean isPaused = false;
     private boolean escapePressed = false;
     private Skin skin;
@@ -71,21 +72,24 @@ public class GameScreen extends ScreenAdapter {
     private float spawnTimer = 0f;
     private final float SPAWN_INTERVAL = 0.3f;
 
+    private User loggedInUser;
     // user id
     private int userId;
 
     public GameScreen(MyGdxGame context) {
         this.context = context;
+        loggedInUser = context.getLoggedInUser();
+        if(loggedInUser != null){
+            System.out.println("Logged in user: " + loggedInUser.getUsername());
+        }
     }
     @Override
     public void show() {
-        bulletTexture = new Texture("tile000.png");
+        //bulletTexture = new Texture("tile000.png");
         stage = new Stage(new ScreenViewport()); //initialize stage
         skin = new Skin(Gdx.files.internal("skinfiles/last_stand2.json")); //initialize skin
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE, Gdx.graphics.getHeight() / SCALE);
-
-
         world = new World(new Vector2(0, 0), false);
         b2dr = new Box2DDebugRenderer();
         player = new PlayerManager(world);
@@ -108,8 +112,10 @@ public class GameScreen extends ScreenAdapter {
         suga = new PointLight(rayHandler, 50, Color.GRAY, 5, player.getPosition().x, player.getPosition().y);
         suga.attachToBody(PlayerManager.player);
         // Initialize HUD
-        hud = new HUD(100, skin); // Max health is 100
-
+        hud = new HUD(100, skin); // Max health is 100'
+        if(hud.getScore() != 0){
+            hud.resetScore();
+        }
 
         Table root = new Table();
         root.setFillParent(true);
@@ -124,9 +130,8 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage);
         textureAtlas = new TextureAtlas("enemies/Spirit.atlas");
         enemyTextureRegion = textureAtlas.findRegion("walk_down");
+        hud.resetScore();
     }
-
-
     private TextButton createButton(String text) {
         TextButton button = new TextButton(text, skin);
         button.addListener(new ClickListener() {
@@ -142,6 +147,7 @@ public class GameScreen extends ScreenAdapter {
         return button;
     }
 
+
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escapePressed) {
@@ -150,7 +156,6 @@ public class GameScreen extends ScreenAdapter {
         } else if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             escapePressed = false;
         }
-
         if (isPaused) {
             stage.act(delta);
             stage.draw();
@@ -169,12 +174,14 @@ public class GameScreen extends ScreenAdapter {
                 enemy.update(delta);
                 enemy.draw(batch);
             }
-            for (Bullet bullet : bulletManager) {
-                if (bullet.isActive()) {
-                    bullet.Update(delta);
-                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
-                }
-            }
+
+
+//            for (Bullet bullet : bulletManager) {
+//                if (bullet.isActive()) {
+//                    bullet.Update(delta);
+//                    batch.draw(bulletTexture, bullet.bulletLocation.x * PPM, bullet.bulletLocation.y * PPM);
+//                }
+//            }
             batch.end();
             rayHandler.render();
             hud.update(delta, player.getHealth(), (int)elapsedTime); // Update health based on player's current health
@@ -202,9 +209,12 @@ public class GameScreen extends ScreenAdapter {
         batch.dispose();
         b2dr.dispose();
         mapManager.dispose();
-        bulletTexture.dispose();
         skin.dispose();
         stage.dispose();
+        hud.dispose();
+
+
+
     }
 
     private void cameraUpdate(float delta) {
@@ -214,6 +224,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void update(float delta) {
+
         world.step(1 / 60f, 6, 2);
         for(Enemies enemy: enemies){
             enemy.update(delta);
@@ -222,47 +233,51 @@ public class GameScreen extends ScreenAdapter {
         suga.setPosition(playerPosition.x * PPM, playerPosition.y * PPM);
         handlePlayerEnemyCollisions();
         rayHandler.update();
-        rayHandler.setAmbientLight(.2f);
+        rayHandler.setAmbientLight(.002f);
         player.inputUpdate(delta);
 //        player.getBoundingBox();
         cameraUpdate(delta);
         mapManager.renderMap(camera);
         batch.setProjectionMatrix(camera.combined);
         rayHandler.setCombinedMatrix(camera.combined.cpy().scl(PPM));
-        handleBulletInput();
-        bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
+//        handleBulletInput();
+//        bulletManager.removeIf(bullet -> bullet.bulletLocation.x < -50 || bullet.bulletLocation.x > Gdx.graphics.getWidth() + 50 || bullet.bulletLocation.y < -50 || bullet.bulletLocation.y > Gdx.graphics.getHeight() + 50);
 
         spawnTimer += delta;
         if (spawnTimer >= SPAWN_INTERVAL) {
-            spawnEnemies(3);
+            spawnEnemies(6);
             spawnTimer = 0f; // Reset timer
         }
+
         handleCollisions();
         timer += delta;
-
+        System.out.println("Player Score: " + hud.getScore());
+        userId = loggedInUser.getId();
+        System.out.println("Player ID: " + userId);
         if (player.getHealth() <= 0) {
+            elapsedTime=0;
             context.setScreen(new GameOverScreen(context, hud.getScore(), userId));
         }
     }
 
-    private void handleBulletInput() {
-        if (Gdx.input.justTouched()) {
-            Vector2 bulletStartPosition = player.getPosition().cpy();
-
-            Vector3 mouseScreenPosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            Vector3 mouseWorldPosition3 = camera.unproject(mouseScreenPosition);
-            Vector2 mouseWorldPosition = new Vector2(mouseWorldPosition3.x / PPM, mouseWorldPosition3.y / PPM);
-
-            Vector2 direction = mouseWorldPosition.cpy().sub(bulletStartPosition).nor();
-            Vector2 bulletVelocity = direction.scl(bulletSpeed);
-
-            float bulletWidth = bulletTexture.getWidth();
-            float bulletHeight = bulletTexture.getHeight();
-
-            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity, 70f, bulletWidth, bulletHeight);
-            bulletManager.add(myBullet);
-        }
-    }
+//    private void handleBulletInput() {
+//        if (Gdx.input.justTouched()) {
+//            Vector2 bulletStartPosition = player.getPosition().cpy();
+//
+//            Vector3 mouseScreenPosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+//            Vector3 mouseWorldPosition3 = camera.unproject(mouseScreenPosition);
+//            Vector2 mouseWorldPosition = new Vector2(mouseWorldPosition3.x / PPM, mouseWorldPosition3.y / PPM);
+//
+////            Vector2 direction = mouseWorldPosition.cpy().sub(bulletStartPosition).nor();
+////            Vector2 bulletVelocity = direction.scl(bulletSpeed);
+////
+////            float bulletWidth = bulletTexture.getWidth();
+////            float bulletHeight = bulletTexture.getHeight();
+////
+////            Bullet myBullet = new Bullet(bulletStartPosition, mouseWorldPosition, bulletVelocity, 70f, bulletWidth, bulletHeight);
+////            bulletManager.add(myBullet);
+//        }
+//    }
 
     private void spawnEnemies(int numberOfEnemies) {
         Random random = new Random();
@@ -274,7 +289,7 @@ public class GameScreen extends ScreenAdapter {
             float y = random.nextFloat() * Gdx.graphics.getHeight();
 //            float y = random.nextFloat() * Gdx.graphics.getHeight() / SCALE;
 
-            Enemies enemy = new Enemies(10, x, y, 13, 13, enemyTextureRegion, player);
+            Enemies enemy = new Enemies(15, x, y, 13, 13, enemyTextureRegion, player);
             enemies.add(enemy);
         }
     }
@@ -306,7 +321,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void handlePlayerEnemyCollisions() {
-        Rectangle playerBounds = new Rectangle(player.getPosition().x * PPM - 16, player.getPosition().y * PPM - 16, 32, 32);
+        Rectangle playerBounds = new Rectangle(player.getPosition().x * PPM - 16, player.getPosition().y * PPM - 16, 24, 24);
         Iterator<Enemies> enemyIterator = enemies.iterator();
 
         while (enemyIterator.hasNext()) {
